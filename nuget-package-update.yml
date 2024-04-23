@@ -1,0 +1,33 @@
+name: NuGet Package Update
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight
+
+jobs:
+  update_packages:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Install .NET Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.x'
+
+    - name: Restore NuGet Packages
+      run: dotnet restore
+
+    - name: Update NuGet Packages
+      run: dotnet outdated -u
+
+    - name: Commit Package Updates
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "chore: update NuGet packages" || echo "No changes to commit"
+        git push
+
