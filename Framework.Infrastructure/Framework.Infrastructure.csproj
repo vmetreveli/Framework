@@ -7,7 +7,8 @@
         <Authors>Vakhushti Metreveli</Authors>
         <Description>Framework For DDD</Description>
         <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
-        <PackageId>Vm.Framework</PackageId>
+        <PackageId>FrameworkVM</PackageId>
+        <Version>1.0.1</Version>
     </PropertyGroup>
 
     <ItemGroup>
