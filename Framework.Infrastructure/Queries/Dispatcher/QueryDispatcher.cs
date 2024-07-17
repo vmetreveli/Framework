@@ -12,6 +12,6 @@ public sealed class QueryDispatcher(IServiceProvider serviceProvider) : IQueryDi
             throw new InvalidOperationException($"Query handler for '{typeof(TResult).Name}' is invalid.");
 
         // ReSharper disable once PossibleNullReferenceException
-        return await (Task<TResult>) method.Invoke(handler, new object[] {query, cancellationToken});
+        return await (Task<TResult>)method.Invoke(handler, new object[] { query, cancellationToken });
     }
 }

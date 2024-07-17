@@ -1,4 +1,4 @@
-﻿namespace Framework.Abstractions.Kernel.Types;
+﻿namespace Framework.Abstractions.Primitives.Types;
 
 public class EntityId(Guid value) : TypeId(value)
 {

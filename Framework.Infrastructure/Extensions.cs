@@ -1,7 +1,8 @@
-﻿using Framework.Abstractions.Commands;
-using Framework.Abstractions.Dispatchers;
+﻿using System.Linq;
 using Framework.Abstractions.Events;
-using Framework.Abstractions.Queries;
+using Framework.Abstractions.Exceptions;
+using Framework.Infrastructure.Exceptions;
+using Microsoft.AspNetCore.Builder;
 
 namespace Framework.Infrastructure;
 
@@ -11,9 +12,9 @@ public static class Extensions
     {
         services.AddCommands(assembly);
         services.AddQueries(assembly);
-        services.AddEvents(assembly);
+        //services.AddEvents(assembly);
         services.AddScoped<IDispatcher, Dispatcher>();
-
+        services.AddErrorHandling();
         return services;
     }
 
@@ -23,14 +24,21 @@ public static class Extensions
 
         var commandHandlerTypes = assembly.GetTypes()
             .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)));
+                .Any(i => i.IsGenericType
+                          && (i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)
+                              || i.GetGenericTypeDefinition()
+                              == typeof(ICommandHandler<>))));
 
         // Register each query handler as scoped
         foreach (var type in commandHandlerTypes)
         {
             // Get the implemented interfaces for the query handler
             var interfaces = type.GetInterfaces()
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>));
+                .Where(i =>
+                    i.IsGenericType
+                    &&
+                    (i.GetGenericTypeDefinition() == typeof(ICommandHandler<>)
+                     || i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)));
 
             // Register each interface with the corresponding implementation
             foreach (var interfaceType in interfaces) services.AddScoped(interfaceType, type);
@@ -85,5 +93,18 @@ public static class Extensions
         }
 
         return services;
+    }
+
+    private static IServiceCollection AddErrorHandling(this IServiceCollection services)
+    {
+        return services
+            .AddScoped<ErrorHandlerMiddleware>()
+            .AddSingleton<IExceptionToResponseMapper, ExceptionToResponseMapper>()
+            .AddSingleton<IExceptionCompositionRoot, ExceptionCompositionRoot>();
+    }
+
+    public static IApplicationBuilder UseErrorHandling(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<ErrorHandlerMiddleware>();
     }
 }

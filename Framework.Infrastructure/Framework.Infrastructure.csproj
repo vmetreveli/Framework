@@ -3,23 +3,20 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageId>FrameworkVM</PackageId>
-        <Version>1.0.0</Version>
-        <Authors>Vakhushti Metreveli</Authors>
-        <Company>VM</Company>
     </PropertyGroup>
+
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <PackageReference Include="Humanizer.Core" Version="2.14.1"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6"/>
         <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
     </ItemGroup>
+
     <ItemGroup>
-      <ProjectReference Include="..\Framework.Abstractions\Framework.Abstractions.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\Framework.Abstractions\Framework.Abstractions.csproj" />
+        <ProjectReference Include="..\Framework.Abstractions\Framework.Abstractions.csproj"/>
     </ItemGroup>
 </Project>

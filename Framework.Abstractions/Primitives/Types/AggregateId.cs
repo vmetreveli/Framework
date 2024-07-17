@@ -1,13 +1,13 @@
-﻿namespace Framework.Abstractions.Kernel.Types;
+﻿namespace Framework.Abstractions.Primitives.Types;
 
 public class AggregateId<T> : IEquatable<AggregateId<T>>
 {
-    public T Value { get; }
-
     public AggregateId(T value)
     {
         Value = value;
     }
+
+    public T Value { get; }
 
     public bool Equals(AggregateId<T> other)
     {
