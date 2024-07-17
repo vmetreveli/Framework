@@ -3,6 +3,10 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Title>Framework</Title>
+        <Authors>Vakhushti Metreveli</Authors>
+        <Description>Framework For DDD</Description>
+        <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -18,5 +22,12 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Framework.Abstractions\Framework.Abstractions.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="4518763_framework_phoenix_icon.png">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
     </ItemGroup>
 </Project>
