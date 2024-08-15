@@ -9,3 +9,6 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Framework.Abstractions.Commands;
 global using Framework.Abstractions.Dispatchers;
 global using Framework.Abstractions.Queries;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Diagnostics;
+global using Newtonsoft.Json;
