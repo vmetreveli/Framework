@@ -1,8 +1,11 @@
-﻿using System.Linq;
-using Framework.Abstractions.Events;
+﻿using Framework.Abstractions.Events;
 using Framework.Abstractions.Exceptions;
 using Framework.Infrastructure.Exceptions;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
 
 namespace Framework.Infrastructure;
 
@@ -106,5 +109,140 @@ public static class Extensions
     public static IApplicationBuilder UseErrorHandling(this IApplicationBuilder app)
     {
         return app.UseMiddleware<ErrorHandlerMiddleware>();
+    }
+
+
+    public static IServiceCollection AddEventBus(this IServiceCollection services,
+        IConfiguration configuration, DbContext dbContext, Assembly assembly)
+    {
+        var config = configuration.GetSection("RabbitMQ").Get<RabbitMqOptions>();
+
+        services.AddMassTransit(configurator =>
+        {
+            //configurator.AddConsumer<CountryIntegrationEventConsumer>();
+            //configurator.AddConsumer<CityIntegrationEventConsumer>();
+
+            var eventConsumer = assembly.GetTypes()
+                .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
+                    .Any(i => i.IsGenericType
+                              && i.GetGenericTypeDefinition() == typeof(IConsumer<>)));
+
+            // Register each EventConsumer
+            foreach (var consumer in eventConsumer) configurator.AddConsumer(consumer);
+
+
+            configurator.AddEntityFrameworkOutbox<DbContext>(o =>
+            {
+                o.QueryDelay = TimeSpan.FromSeconds(1);
+
+                o.UsePostgres();
+                o.UseBusOutbox();
+            });
+
+
+            configurator.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(config.Host,
+                    //cfgSection["VirtualHost"],
+                    h =>
+                    {
+                        h.Username(config.UserName);
+                        h.Password(config.Password);
+                    });
+
+                var receiveEndpoints = FindImplementations<IEventBusConstant>();
+
+                // Register each EventConsumer
+                foreach (var contract in receiveEndpoints)
+                {
+                    // cfg.ReceiveEndpoint(contract.GetProperty("QueueName").GetValue,
+                    //     c =>
+                    //     {
+                    //         ConfigureEndpoint(c, nameof(contract), context, contract.GetType(), config.ExchangeName);
+                    //     });
+                    
+                    var queueName = contract.GetProperty("QueueName").GetValue(contract)?.ToString();
+                    if (queueName != null)
+                    {
+                        cfg.ReceiveEndpoint(queueName, (IRabbitMqReceiveEndpointConfigurator endpointConfigurator) =>
+                        {
+                            ConfigureEndpoint(endpointConfigurator, contract.Name, context, contract.GetType(), config.ExchangeName);
+                        });
+                    }
+                }
+            });
+        });
+
+        return services;
+    }
+
+
+    private static void ConfigureEndpoint(
+        IRabbitMqReceiveEndpointConfigurator c,
+        string routingKey,
+        IRegistrationContext context,
+        Type consumerType,
+        string exchangeName)
+    {
+        c.ConfigureConsumeTopology = false;
+
+        c.Bind(exchangeName, x =>
+        {
+            x.Durable = true;
+            x.AutoDelete = false;
+            x.ExchangeType = "topic";
+            x.RoutingKey = routingKey;
+        });
+
+        c.ClearSerialization();
+        c.UseRawJsonSerializer();
+
+        c.ConfigureConsumer(context, consumerType);
+    }
+
+
+    private static IEnumerable<Type> FindImplementations<TInterface>()
+    {
+        var interfaceType = typeof(TInterface);
+        if (!interfaceType.IsInterface)
+            throw new ArgumentException("The provided type must be an interface", nameof(TInterface));
+
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        var result = new List<Type>();
+
+        foreach (var assembly in assemblies)
+        {
+            var types = assembly.GetTypes();
+            var implementingTypes =
+                types.Where(t => interfaceType.IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+            result.AddRange(implementingTypes);
+        }
+        return result;
+    }
+
+
+    public static IApplicationBuilder UseEventEndpoints(this IApplicationBuilder app)
+    {
+        var types = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(assembly => !assembly.IsDynamic &&
+                               !assembly.FullName.StartsWith("System") &&
+                               !assembly.FullName.StartsWith("Microsoft"))
+            .AsParallel()
+            .SelectMany(assembly => assembly.GetTypes())
+            .Where(type => type.GetCustomAttributes().Any(attr => attr.GetType().Name == "ProduceEventAttribute"));
+
+        foreach (var type in types)
+        {
+            var attribute = type.GetCustomAttributes().Single(attr => attr.GetType().Name == "ProduceEventAttribute");
+
+            (app as IEndpointRouteBuilder)
+                .MapGet(
+                    $"/{attribute.GetType().GetProperty("Topic").GetValue(attribute)}/{attribute.GetType().GetProperty("EventType").GetValue(attribute)}",
+                    () => { })
+                .Produces(StatusCodes.Status200OK, type.UnderlyingSystemType)
+                .WithTags("__events__");
+        }
+
+        return app;
     }
 }

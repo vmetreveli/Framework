@@ -1,7 +1,5 @@
 using Framework.Abstractions.Primitives;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Framework.Infrastructure.Interceptors;
 
