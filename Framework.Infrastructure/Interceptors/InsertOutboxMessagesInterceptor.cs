@@ -1,8 +1,5 @@
 using Framework.Abstractions.Primitives.Types;
 using Framework.Infrastructure.Outbox;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Newtonsoft.Json;
 
 namespace Framework.Infrastructure.Interceptors;
 
