@@ -11,11 +11,15 @@ namespace Framework.Infrastructure;
 
 public static class Extensions
 {
-    public static IServiceCollection AddFramework(this IServiceCollection services, Assembly assembly)
+    public static IServiceCollection AddFramework(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        Assembly assembly)
     {
         services.AddCommands(assembly);
         services.AddQueries(assembly);
         //services.AddEvents(assembly);
+        services.AddEventBus(configuration);
         services.AddScoped<IDispatcher, Dispatcher>();
         services.AddErrorHandling();
         return services;
@@ -112,32 +116,31 @@ public static class Extensions
     }
 
 
-    public static IServiceCollection AddEventBus(this IServiceCollection services,
-        IConfiguration configuration, DbContext dbContext, Assembly assembly)
+    private static IServiceCollection AddEventBus(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        var config = configuration.GetSection("RabbitMQ").Get<RabbitMqOptions>();
+        var config = configuration.GetSection("AppConfiguration:RabbitMQ").Get<RabbitMqOptions>();
 
         services.AddMassTransit(configurator =>
         {
-            //configurator.AddConsumer<CountryIntegrationEventConsumer>();
-            //configurator.AddConsumer<CityIntegrationEventConsumer>();
-
-            var eventConsumer = assembly.GetTypes()
-                .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
-                    .Any(i => i.IsGenericType
-                              && i.GetGenericTypeDefinition() == typeof(IConsumer<>)));
+        
+            var eventConsumer = FindConsumers();
 
             // Register each EventConsumer
-            foreach (var consumer in eventConsumer) configurator.AddConsumer(consumer);
-
-
-            configurator.AddEntityFrameworkOutbox<DbContext>(o =>
+            foreach (var consumer in eventConsumer)
             {
-                o.QueryDelay = TimeSpan.FromSeconds(1);
+                configurator.AddConsumer(consumer);
+            }
 
-                o.UsePostgres();
-                o.UseBusOutbox();
-            });
+            // configurator
+            //     .AddEntityFrameworkOutbox<BaseDbContext>
+            //     (o =>
+            //     {
+            //         o.QueryDelay = TimeSpan.FromSeconds(1);
+            //
+            //         o.UsePostgres();
+            //         o.UseBusOutbox();
+            //     });
 
 
             configurator.UsingRabbitMq((context, cfg) =>
@@ -150,25 +153,13 @@ public static class Extensions
                         h.Password(config.Password);
                     });
 
-                var receiveEndpoints = FindImplementations<IEventBusConstant>();
 
                 // Register each EventConsumer
-                foreach (var contract in receiveEndpoints)
+
+                foreach (var type in eventConsumer)
                 {
-                    // cfg.ReceiveEndpoint(contract.GetProperty("QueueName").GetValue,
-                    //     c =>
-                    //     {
-                    //         ConfigureEndpoint(c, nameof(contract), context, contract.GetType(), config.ExchangeName);
-                    //     });
-                    
-                    var queueName = contract.GetProperty("QueueName").GetValue(contract)?.ToString();
-                    if (queueName != null)
-                    {
-                        cfg.ReceiveEndpoint(queueName, (IRabbitMqReceiveEndpointConfigurator endpointConfigurator) =>
-                        {
-                            ConfigureEndpoint(endpointConfigurator, contract.Name, context, contract.GetType(), config.ExchangeName);
-                        });
-                    }
+                    cfg.ReceiveEndpoint($"{type.FullName}",
+                        c => { c.ConfigureConsumer(context, type); });
                 }
             });
         });
@@ -177,49 +168,7 @@ public static class Extensions
     }
 
 
-    private static void ConfigureEndpoint(
-        IRabbitMqReceiveEndpointConfigurator c,
-        string routingKey,
-        IRegistrationContext context,
-        Type consumerType,
-        string exchangeName)
-    {
-        c.ConfigureConsumeTopology = false;
-
-        c.Bind(exchangeName, x =>
-        {
-            x.Durable = true;
-            x.AutoDelete = false;
-            x.ExchangeType = "topic";
-            x.RoutingKey = routingKey;
-        });
-
-        c.ClearSerialization();
-        c.UseRawJsonSerializer();
-
-        c.ConfigureConsumer(context, consumerType);
-    }
-
-
-    private static IEnumerable<Type> FindImplementations<TInterface>()
-    {
-        var interfaceType = typeof(TInterface);
-        if (!interfaceType.IsInterface)
-            throw new ArgumentException("The provided type must be an interface", nameof(TInterface));
-
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        var result = new List<Type>();
-
-        foreach (var assembly in assemblies)
-        {
-            var types = assembly.GetTypes();
-            var implementingTypes =
-                types.Where(t => interfaceType.IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
-            result.AddRange(implementingTypes);
-        }
-        return result;
-    }
-
+    #region UseEventEndpoints
 
     public static IApplicationBuilder UseEventEndpoints(this IApplicationBuilder app)
     {
@@ -244,5 +193,27 @@ public static class Extensions
         }
 
         return app;
+    }
+
+    #endregion
+
+    // Get all classes implementing IConsumer<> from all loaded assemblies
+    private static IEnumerable<Type> FindConsumers()
+    {
+        var consumerInterfaceType = typeof(IIntegrationEventConsumer<>);
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        var consumer=new List<Type>();
+        
+        foreach (var assembly in assemblies)
+        {
+            consumer.AddRange(assembly.GetTypes()
+              .Where(type => type.IsClass && !type.IsAbstract)
+              .Where(type => type.GetInterfaces()
+                  .Any(interfaceType =>
+                      interfaceType.IsGenericType &&
+                      interfaceType.GetGenericTypeDefinition() == consumerInterfaceType)));
+        }
+
+        return consumer;
     }
 }
