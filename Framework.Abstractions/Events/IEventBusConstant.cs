@@ -2,6 +2,6 @@
 {
     public interface IEventBusConstant
     {
-         public string QueueName { get; set; }
+        public string QueueName { get; set; }
     }
 }
