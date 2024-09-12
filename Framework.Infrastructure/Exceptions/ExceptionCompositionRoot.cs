@@ -1,5 +1,4 @@
 ﻿using Framework.Abstractions.Exceptions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Framework.Infrastructure.Exceptions;
 

@@ -1,4 +1,4 @@
-﻿using Inflow.Shared.Abstractions.Kernel;
+﻿using Framework.Abstractions.Events;
 
 namespace Framework.Abstractions.Kernel;
 

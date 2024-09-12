@@ -8,7 +8,7 @@ namespace Framework.Abstractions.Specifications;
 /// </summary>
 /// <typeparam name="TEntity">The entity type.</typeparam>
 public abstract class Specification<TEntity, TId>
-    where TEntity : AggregateRoot<TId>
+    where TEntity : EntityBase<TId>
     where TId : notnull
 
 {

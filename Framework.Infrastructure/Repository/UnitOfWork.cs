@@ -1,6 +1,5 @@
 using System.Data;
 using Framework.Abstractions.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace Framework.Infrastructure.Repository;
 

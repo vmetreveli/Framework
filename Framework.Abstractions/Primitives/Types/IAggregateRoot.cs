@@ -1,3 +1,5 @@
+using Framework.Abstractions.Events;
+
 namespace Framework.Abstractions.Primitives.Types;
 
 public interface IAggregateRoot

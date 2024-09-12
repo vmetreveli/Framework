@@ -1,4 +1,5 @@
-﻿using Framework.Abstractions.Primitives.Types;
+﻿using Framework.Abstractions.Events;
+using Framework.Abstractions.Primitives.Types;
 
 namespace Framework.Abstractions.Primitives;
 
@@ -45,9 +46,12 @@ public abstract class AggregateRoot<TId> : EntityBase<TId>, IAggregateRoot
 {
     private readonly List<IDomainEvent> _domainEvents = [];
 
+
     protected AggregateRoot(TId id) : base(id)
     {
     }
+
+    public TId Id { get; protected set; }
 
     public IReadOnlyCollection<IDomainEvent> GetDomainEvents()
     {
