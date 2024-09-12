@@ -2,6 +2,9 @@
 
 public interface IEventDispatcher
 {
-    Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
-        where TEvent : class, IEvent;
+    Task PublishDomainEventAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
+        where TEvent : IDomainEvent;
+
+    Task PublishIntegrationEventAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
+        where TEvent : IIntegrationEvent;
 }

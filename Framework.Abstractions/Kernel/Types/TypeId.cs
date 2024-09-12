@@ -2,22 +2,22 @@
 
 public abstract class TypeId : IEquatable<TypeId>
 {
-    public Guid Value { get; }
-
     protected TypeId(Guid value)
     {
         Value = value;
     }
 
-    public bool IsEmpty()
-    {
-        return Value == Guid.Empty;
-    }
+    public Guid Value { get; }
 
     public bool Equals(TypeId other)
     {
         if (ReferenceEquals(null, other)) return false;
         return ReferenceEquals(this, other) || Value.Equals(other.Value);
+    }
+
+    public bool IsEmpty()
+    {
+        return Value == Guid.Empty;
     }
 
     public override bool Equals(object obj)

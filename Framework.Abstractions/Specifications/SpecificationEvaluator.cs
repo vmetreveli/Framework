@@ -7,7 +7,7 @@ public static class SpecificationEvaluator
 {
     public static IQueryable<TEntity> GetQuery<TEntity, TId>(
         IQueryable<TEntity> inputQueryable, Specification<TEntity, TId> specification)
-        where TEntity : AggregateRoot<TId>
+        where TEntity : EntityBase<TId>
         where TId : notnull
     {
         var queryable = inputQueryable;

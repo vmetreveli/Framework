@@ -1,11 +1,15 @@
 ﻿using Framework.Abstractions.Events;
 using Framework.Abstractions.Exceptions;
+using Framework.Abstractions.Repository;
 using Framework.Infrastructure.Exceptions;
+using Framework.Infrastructure.Jobs;
+using Framework.Infrastructure.Repository;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
+using Quartz;
 
 namespace Framework.Infrastructure;
 
@@ -18,10 +22,22 @@ public static class Extensions
     {
         services.AddCommands(assembly);
         services.AddQueries(assembly);
-        //services.AddEvents(assembly);
+        services.AddEvents(assembly);
         services.AddEventBus(configuration);
         services.AddScoped<IDispatcher, Dispatcher>();
         services.AddErrorHandling();
+
+        services.AddScoped<IOutboxRepository, OutboxRepository>();
+
+        // services
+        //     .AddDbContext<DbContext, BaseDbContext>((sp, options) =>
+        //     {
+        //         options.UseNpgsql(
+        //                 configuration.GetConnectionString("DefaultConnection"))
+        //             .UseSnakeCaseNamingConvention()
+        //             .EnableSensitiveDataLogging()
+        //             .EnableDetailedErrors();
+        //     });
         return services;
     }
 
@@ -121,26 +137,27 @@ public static class Extensions
     {
         var config = configuration.GetSection("AppConfiguration:RabbitMQ").Get<RabbitMqOptions>();
 
+        // Add the required Quartz.NET services
+        services.AddQuartz(q =>
+        {
+            // Use a Scoped container to create jobs. I'll touch on this later
+            q.UseMicrosoftDependencyInjectionScopedJobFactory();
+
+            // Create a "key" for the job                    
+            q.AddJobAndTrigger<OutboxJob>(configuration);
+        });
+
+        // Add the Quartz.NET hosted service
+
+        services.AddQuartzHostedService(
+            q => q.WaitForJobsToComplete = true);
+
         services.AddMassTransit(configurator =>
         {
-        
             var eventConsumer = FindConsumers();
 
             // Register each EventConsumer
-            foreach (var consumer in eventConsumer)
-            {
-                configurator.AddConsumer(consumer);
-            }
-
-            // configurator
-            //     .AddEntityFrameworkOutbox<BaseDbContext>
-            //     (o =>
-            //     {
-            //         o.QueryDelay = TimeSpan.FromSeconds(1);
-            //
-            //         o.UsePostgres();
-            //         o.UseBusOutbox();
-            //     });
+            foreach (var consumer in eventConsumer) configurator.AddConsumer(consumer);
 
 
             configurator.UsingRabbitMq((context, cfg) =>
@@ -153,14 +170,13 @@ public static class Extensions
                         h.Password(config.Password);
                     });
 
+                // Enable the outbox
 
                 // Register each EventConsumer
 
                 foreach (var type in eventConsumer)
-                {
                     cfg.ReceiveEndpoint($"{type.FullName}",
                         c => { c.ConfigureConsumer(context, type); });
-                }
             });
         });
 
@@ -200,19 +216,17 @@ public static class Extensions
     // Get all classes implementing IConsumer<> from all loaded assemblies
     private static IEnumerable<Type> FindConsumers()
     {
-        var consumerInterfaceType = typeof(IIntegrationEventConsumer<>);
+        var consumerInterfaceType = typeof(IEventConsumer<>);
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-        var consumer=new List<Type>();
-        
+        var consumer = new List<Type>();
+
         foreach (var assembly in assemblies)
-        {
             consumer.AddRange(assembly.GetTypes()
-              .Where(type => type.IsClass && !type.IsAbstract)
-              .Where(type => type.GetInterfaces()
-                  .Any(interfaceType =>
-                      interfaceType.IsGenericType &&
-                      interfaceType.GetGenericTypeDefinition() == consumerInterfaceType)));
-        }
+                .Where(type => type.IsClass && !type.IsAbstract)
+                .Where(type => type.GetInterfaces()
+                    .Any(interfaceType =>
+                        interfaceType.IsGenericType &&
+                        interfaceType.GetGenericTypeDefinition() == consumerInterfaceType)));
 
         return consumer;
     }
