@@ -3,7 +3,7 @@ using OutboxMessage = Framework.Abstractions.Outbox.OutboxMessage;
 
 namespace Framework.Abstractions.Repository;
 
-public interface IOutboxRepository// : IRepository<OutboxMessage, Guid>
+public interface IOutboxRepository // : IRepository<OutboxMessage, Guid>
 {
     void CreateOutboxMessage(OutboxMessage outboxMessage);
     Task UpdateOutboxMesageSatate(Guid eventId, OutboxMessageState state);

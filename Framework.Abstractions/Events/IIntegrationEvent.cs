@@ -1,6 +1,6 @@
 ﻿namespace Framework.Abstractions.Events;
 
-public interface IIntegrationEvent:IEvent
+public interface IIntegrationEvent : IEvent
 {
     public Guid Id { get; set; }
 
