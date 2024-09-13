@@ -32,7 +32,7 @@ public class OutboxRepository(BaseDbContext context)
     /// </summary>
     /// <param name="eventId">The event ID of the outbox message to update.</param>
     /// <param name="state">The new state to set for the outbox message.</param>
-    public async Task UpdateOutboxMesageSatate(Guid eventId, OutboxMessageState state)
+    public async Task UpdateOutboxMessageState(Guid eventId, OutboxMessageState state)
     {
         // Find the outbox message by its event ID
         var outbox = await context.OutboxMessages
