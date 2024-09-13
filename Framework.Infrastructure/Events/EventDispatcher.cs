@@ -1,6 +1,5 @@
 ﻿using Framework.Abstractions.Events;
 using Framework.Abstractions.Outbox;
-using Framework.Abstractions.Primitives;
 using Framework.Abstractions.Repository;
 using MassTransit;
 

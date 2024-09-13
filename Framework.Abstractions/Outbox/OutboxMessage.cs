@@ -1,5 +1,4 @@
-﻿using System.Dynamic;
-using Framework.Abstractions.Primitives;
+﻿using Framework.Abstractions.Primitives;
 using Newtonsoft.Json;
 
 namespace Framework.Abstractions.Outbox;
@@ -22,7 +21,7 @@ public sealed class OutboxMessage : AggregateRoot<Guid>
     }
 
     public string Data { get; }
-    public string Type { get; private set; }
+    public string Type { get; }
     public Guid EventId { get; private set; }
     public DateTime EventDate { get; private set; }
     public OutboxMessageState State { get; private set; }
@@ -36,6 +35,6 @@ public sealed class OutboxMessage : AggregateRoot<Guid>
 
     public dynamic? RecreateMessage()
     {
-        return JsonConvert.DeserializeObject(Data,  System.Type.GetType(Type));
+        return JsonConvert.DeserializeObject(Data, System.Type.GetType(Type));
     }
 }

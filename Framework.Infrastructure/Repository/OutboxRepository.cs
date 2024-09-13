@@ -2,7 +2,6 @@
 using Framework.Abstractions.Repository;
 using Framework.Infrastructure.Context;
 
-
 namespace Framework.Infrastructure.Repository;
 
 public class OutboxRepository(BaseDbContext context)
@@ -14,10 +13,7 @@ public class OutboxRepository(BaseDbContext context)
             .OutboxMessages
             .FirstOrDefaultAsync(x =>
                 x.EventId == outboxMessage.EventId);
-        if (message is null)
-        {
-            context.OutboxMessages.Add(outboxMessage);
-        }
+        if (message is null) context.OutboxMessages.Add(outboxMessage);
     }
 
     public async Task UpdateOutboxMesageSatate(Guid eventId, OutboxMessageState state)

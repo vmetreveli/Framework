@@ -7,8 +7,6 @@ using Framework.Infrastructure.Jobs;
 using Framework.Infrastructure.Repository;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Quartz;
 
@@ -143,13 +141,13 @@ public static class Extensions
         {
             // Use a Scoped container to create jobs. I'll touch on this later
             q.UseMicrosoftDependencyInjectionScopedJobFactory();
-        
+
             // Create a "key" for the job                    
             q.AddJobAndTrigger<OutboxJob>(configuration);
         });
-        
+
         // Add the Quartz.NET hosted service
-        
+
         services.AddQuartzHostedService(
             q => q.WaitForJobsToComplete = true);
 
@@ -185,35 +183,6 @@ public static class Extensions
     }
 
 
-    #region UseEventEndpoints
-
-    public static IApplicationBuilder UseEventEndpoints(this IApplicationBuilder app)
-    {
-        var types = AppDomain.CurrentDomain.GetAssemblies()
-            .Where(assembly => !assembly.IsDynamic &&
-                               !assembly.FullName.StartsWith("System") &&
-                               !assembly.FullName.StartsWith("Microsoft"))
-            .AsParallel()
-            .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => type.GetCustomAttributes().Any(attr => attr.GetType().Name == "ProduceEventAttribute"));
-
-        foreach (var type in types)
-        {
-            var attribute = type.GetCustomAttributes().Single(attr => attr.GetType().Name == "ProduceEventAttribute");
-
-            (app as IEndpointRouteBuilder)
-                .MapGet(
-                    $"/{attribute.GetType().GetProperty("Topic").GetValue(attribute)}/{attribute.GetType().GetProperty("EventType").GetValue(attribute)}",
-                    () => { })
-                .Produces(StatusCodes.Status200OK, type.UnderlyingSystemType)
-                .WithTags("__events__");
-        }
-
-        return app;
-    }
-
-    #endregion
-
     // Get all classes implementing IConsumer<> from all loaded assemblies
     private static IEnumerable<Type> FindConsumers()
     {
@@ -230,5 +199,31 @@ public static class Extensions
                         interfaceType.GetGenericTypeDefinition() == consumerInterfaceType)));
 
         return consumer;
+    }
+
+    private static void AddJobAndTrigger<T>(
+        this IServiceCollectionQuartzConfigurator quartz,
+        IConfiguration config)
+        where T : IJob
+    {
+        // Use the name of the IJob as the appsettings.json key
+        var jobName = typeof(T).Name;
+
+        // Try and load the schedule from configuration
+        var configKey = $"AppConfiguration:Quartz:{jobName}";
+        var cronSchedule = config[configKey];
+
+        // Some minor validation
+        if (string.IsNullOrEmpty(cronSchedule))
+            throw new Exception($"No Quartz.NET Cron schedule found for job in configuration at {configKey}");
+
+        // register the job as before
+        var jobKey = new JobKey(jobName);
+        quartz.AddJob<T>(opts => opts.WithIdentity(jobKey));
+
+        quartz.AddTrigger(opts => opts
+            .ForJob(jobKey)
+            .WithIdentity(jobName + "-trigger")
+            .WithCronSchedule(cronSchedule)); // use the schedule from configuration
     }
 }
