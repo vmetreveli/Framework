@@ -1,6 +1,7 @@
 ﻿using Framework.Abstractions.Events;
 using Framework.Abstractions.Exceptions;
 using Framework.Abstractions.Repository;
+using Framework.Infrastructure.Context;
 using Framework.Infrastructure.Exceptions;
 using Framework.Infrastructure.Jobs;
 using Framework.Infrastructure.Repository;
@@ -29,15 +30,15 @@ public static class Extensions
 
         services.AddScoped<IOutboxRepository, OutboxRepository>();
 
-        // services
-        //     .AddDbContext<DbContext, BaseDbContext>((sp, options) =>
-        //     {
-        //         options.UseNpgsql(
-        //                 configuration.GetConnectionString("DefaultConnection"))
-        //             .UseSnakeCaseNamingConvention()
-        //             .EnableSensitiveDataLogging()
-        //             .EnableDetailedErrors();
-        //     });
+        services
+            .AddDbContext<BaseDbContext>((sp, options) =>
+            {
+                options.UseNpgsql(
+                        configuration.GetConnectionString("DefaultConnection"))
+                    .UseSnakeCaseNamingConvention()
+                    .EnableSensitiveDataLogging()
+                    .EnableDetailedErrors();
+            });
         return services;
     }
 
@@ -142,13 +143,13 @@ public static class Extensions
         {
             // Use a Scoped container to create jobs. I'll touch on this later
             q.UseMicrosoftDependencyInjectionScopedJobFactory();
-
+        
             // Create a "key" for the job                    
             q.AddJobAndTrigger<OutboxJob>(configuration);
         });
-
+        
         // Add the Quartz.NET hosted service
-
+        
         services.AddQuartzHostedService(
             q => q.WaitForJobsToComplete = true);
 

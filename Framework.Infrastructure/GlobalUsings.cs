@@ -11,4 +11,4 @@ global using Framework.Abstractions.Dispatchers;
 global using Framework.Abstractions.Queries;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Diagnostics;
-global using Newtonsoft.Json;
+global using OutboxMessage=Framework.Abstractions.Outbox.OutboxMessage;

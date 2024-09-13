@@ -1,33 +1,52 @@
 ﻿using Framework.Abstractions.Events;
 using Framework.Abstractions.Outbox;
 using Framework.Abstractions.Repository;
-using Microsoft.Extensions.Logging;
+using Framework.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Hosting;
 using Quartz;
 
 namespace Framework.Infrastructure.Jobs;
 
 [DisallowConcurrentExecution]
 public class OutboxJob(
-    ILogger<OutboxJob> logger,
-    IOutboxRepository repository,
-    IUnitOfWork unitOfWork,
+    IServiceProvider serviceProvider,
     IEventDispatcher messagePublisher)
     : IJob
 {
     public async Task Execute(IJobExecutionContext context)
     {
-        var readyToSendItems = await repository.GetAllReadyToSend();
-        logger.LogInformation($"Outbox count {readyToSendItems.Count}:date : {DateTime.Now.ToLongTimeString()}");
-        
-        foreach (var item in readyToSendItems)
+        using (var scope = serviceProvider.CreateScope())
         {
-            var eventMessage = item.RecreateMessage();
+            var dbContext = scope.ServiceProvider.GetRequiredService<BaseDbContext>();
 
-            messagePublisher.PublishIntegrationEventAsync(eventMessage);
-           
-            item.ChangeState(OutboxMessageState.SendToQueue);
+            var readyToSendItems = await dbContext.Set<OutboxMessage>()
+                .Where(m => m.State == OutboxMessageState.ReadyToSend)
+                .ToListAsync(context.CancellationToken);
+
+            foreach (var eventMessage in readyToSendItems.Select(item => item.RecreateMessage()))
+            {
+                await messagePublisher.PublishIntegrationEventAsync(eventMessage);
+            }
+
+            // Optional: Update the state of outbox messages after processing
+            // await dbContext.SaveChangesAsync(stoppingToken);
         }
-        
-        await unitOfWork.CompleteAsync();
     }
+
+
+// protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+// {
+//     // var readyToSendItems = await repository.GetAllReadyToSend();
+//
+//
+//     var readyToSendItems = await dbContext.Set<OutboxMessage>()
+//         .Where(m => m.State == OutboxMessageState.ReadyToSend)
+//         .ToListAsync().ConfigureAwait(false);
+//
+//     foreach (var eventMessage in readyToSendItems.Select(item => item.RecreateMessage()))
+//     {
+//         await messagePublisher.PublishIntegrationEventAsync(eventMessage);
+//     }
+// }
 }
