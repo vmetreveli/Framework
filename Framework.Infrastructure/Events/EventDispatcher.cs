@@ -12,7 +12,9 @@ public class EventDispatcher(
     IOutboxRepository repository,
     IUnitOfWork unitOfWork) : IEventDispatcher
 {
-    public async Task PublishDomainEventAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
+    public async Task PublishDomainEventAsync<TEvent>(
+        TEvent @event,
+        CancellationToken cancellationToken = default)
         where TEvent : IDomainEvent
     {
         using var scope = serviceProvider.CreateScope();
@@ -24,18 +26,25 @@ public class EventDispatcher(
         }
     }
 
-    public async Task PublishIntegrationEventAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
+    public async Task PublishIntegrationEventAsync<TEvent>(
+        TEvent @event,
+        CancellationToken cancellationToken = default)
         where TEvent : IIntegrationEvent
     {
         try
         {
-          await publisher.Publish(@event, cancellationToken);
+            //  throw new NotImplementedException();
+            await publisher.Publish(@event, cancellationToken);
+            await repository.UpdateOutboxMesageSatate(@event.Id, OutboxMessageState.Completed);
         }
         catch (Exception ex)
         {
             var outboxMessage = new OutboxMessage(@event, @event.Id, @event.CreationDate);
             repository.CreateOutboxMessage(outboxMessage);
-            await unitOfWork.CompleteAsync(cancellationToken);
+        }
+        finally
+        {
+            await repository.SaveChange();
         }
     }
 }

@@ -18,6 +18,5 @@
         <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1"/>
         <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1"/>
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.5"/>
-        <PackageReference Include="MassTransit.EntityFrameworkCore" Version="8.2.5"/>
-    </ItemGroup>
+        </ItemGroup>
 </Project>
