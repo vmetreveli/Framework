@@ -1,4 +1,6 @@
-﻿namespace Framework.Abstractions.Events;
+﻿using Framework.Abstractions.Primitives;
+
+namespace Framework.Abstractions.Events;
 
 public interface IEventDispatcher
 {
@@ -6,5 +8,5 @@ public interface IEventDispatcher
         where TEvent : IDomainEvent;
 
     Task PublishIntegrationEventAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
-        where TEvent : IIntegrationEvent;
+        where TEvent : IntegrationBaseEvent;
 }

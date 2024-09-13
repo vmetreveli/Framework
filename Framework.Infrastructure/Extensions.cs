@@ -185,13 +185,14 @@ public static class Extensions
 
         services.AddMassTransit(configurator =>
         {
-            var eventConsumer = FindConsumers(); // Find all event consumers
+            var eventConsumer = FindConsumers().ToList(); // Find all event consumers
 
-            foreach (var consumer in eventConsumer) configurator.AddConsumer(consumer); // Register each consumer
+            foreach (var consumer in eventConsumer) 
+                configurator.AddConsumer(consumer); // Register each consumer
 
             configurator.UsingRabbitMq((context, cfg) =>
             {
-                cfg.Host(config.Host, h =>
+                cfg.Host(config!.Host, h =>
                 {
                     h.Username(config.UserName);
                     h.Password(config.Password);
