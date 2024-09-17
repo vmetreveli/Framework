@@ -177,8 +177,7 @@ public static class Extensions
         // Add the required Quartz.NET services
         services.AddQuartz(q =>
         {
-            q.UseMicrosoftDependencyInjectionScopedJobFactory(); // Use DI for job creation
-            q.AddJobAndTrigger<OutboxJob>(configuration); // Register OutboxJob with trigger
+          q.AddJobAndTrigger<OutboxJob>(configuration); // Register OutboxJob with trigger
         });
 
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true); // Ensure jobs complete before shutdown
