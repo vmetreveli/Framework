@@ -29,18 +29,7 @@
         <ProjectReference Include="..\Framework.Abstractions\Framework.Abstractions.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <None Update="4518763_framework_phoenix_icon.png">
-            <Pack>True</Pack>
-            <PackagePath></PackagePath>
-        </None>
-        <None Update="4518763_framework_phoenix_icon.png">
-          <Pack>True</Pack>
-          <PackagePath></PackagePath>
-        </None>
-    </ItemGroup>
-
-    <ItemGroup>
+      <ItemGroup>
         <Folder Include="Migrations\"/>
     </ItemGroup>
 </Project>
