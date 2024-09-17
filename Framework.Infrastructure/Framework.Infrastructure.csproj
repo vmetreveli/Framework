@@ -6,11 +6,10 @@
         <Title>Framework</Title>
         <Authors>Vakhushti Metreveli</Authors>
         <Description>Framework For DDD</Description>
-        <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
         <PackageId>FrameworkVM</PackageId>
         <Version>1.0.1</Version>
         <RepositoryUrl>https://github.com/vmetreveli/Framework</RepositoryUrl>
-        <RepositoryType>Framework </RepositoryType>
+        <RepositoryType>Framework</RepositoryType>
     </PropertyGroup>
 
     <ItemGroup>
@@ -31,18 +30,14 @@
         <ProjectReference Include="..\Framework.Abstractions\Framework.Abstractions.csproj"/>
     </ItemGroup>
 
-    <PropertyGroup>
-        <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
-        <PackageId>FrameworkVM</PackageId>
-    </PropertyGroup>
+  
 
     <ItemGroup>
-        <None Include="..\4518763_framework_phoenix_icon.png">
+        <Resource Include="../4518763_framework_phoenix_icon.png">
           <Pack>True</Pack>
           <PackagePath></PackagePath>
           <Link>4518763_framework_phoenix_icon.png</Link>
-        </None>
-        <None Include="4518763_framework_phoenix_icon.png" Pack="true" PackagePath=""/>
+        </Resource>
     </ItemGroup>
 
       <ItemGroup>
