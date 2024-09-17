@@ -34,6 +34,10 @@
             <Pack>True</Pack>
             <PackagePath></PackagePath>
         </None>
+        <None Update="4518763_framework_phoenix_icon.png">
+          <Pack>True</Pack>
+          <PackagePath></PackagePath>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
