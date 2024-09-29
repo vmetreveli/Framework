@@ -3,12 +3,12 @@
 namespace Framework.Abstractions.Events;
 
 /// <summary>
-/// Defines a dispatcher for publishing events.
+///     Defines a dispatcher for publishing events.
 /// </summary>
 public interface IEventDispatcher
 {
     /// <summary>
-    /// Publishes a domain event asynchronously.
+    ///     Publishes a domain event asynchronously.
     /// </summary>
     /// <typeparam name="TEvent">The type of the domain event to publish.</typeparam>
     /// <param name="event">The domain event to publish.</param>
@@ -18,7 +18,7 @@ public interface IEventDispatcher
         where TEvent : IDomainEvent;
 
     /// <summary>
-    /// Publishes an integration event asynchronously.
+    ///     Publishes an integration event asynchronously.
     /// </summary>
     /// <typeparam name="TEvent">The type of the integration event to publish.</typeparam>
     /// <param name="event">The integration event to publish.</param>

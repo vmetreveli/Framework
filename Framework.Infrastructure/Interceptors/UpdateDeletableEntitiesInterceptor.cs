@@ -3,19 +3,20 @@ using Framework.Abstractions.Primitives;
 namespace Framework.Infrastructure.Interceptors;
 
 /// <summary>
-/// Interceptor for updating entities that implement <see cref="IDeletableEntity"/> before saving changes to the database.
-/// This interceptor sets audit fields for soft deletion instead of physically deleting records.
+///     Interceptor for updating entities that implement <see cref="IDeletableEntity" /> before saving changes to the
+///     database.
+///     This interceptor sets audit fields for soft deletion instead of physically deleting records.
 /// </summary>
 public sealed class UpdateDeletableEntitiesInterceptor : SaveChangesInterceptor
 {
     /// <summary>
-    /// Called asynchronously before changes are saved to the database.
-    /// Updates the deletable entities to perform a soft delete by marking them as deleted.
+    ///     Called asynchronously before changes are saved to the database.
+    ///     Updates the deletable entities to perform a soft delete by marking them as deleted.
     /// </summary>
     /// <param name="eventData">The event data associated with the database context.</param>
     /// <param name="result">The current result of the interception.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <returns>A <see cref="ValueTask{InterceptionResult{T}}"/> representing the asynchronous operation.</returns>
+    /// <returns>A <see cref="ValueTask{InterceptionResult{T}}" /> representing the asynchronous operation.</returns>
     public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
         InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
@@ -28,10 +29,11 @@ public sealed class UpdateDeletableEntitiesInterceptor : SaveChangesInterceptor
     }
 
     /// <summary>
-    /// Updates entities that implement <see cref="IDeletableEntity"/> which are marked for deletion.
-    /// Performs a soft delete by setting the <see cref="IDeletableEntity.DeletedOn"/> and <see cref="IDeletableEntity.IsDeleted"/> properties.
+    ///     Updates entities that implement <see cref="IDeletableEntity" /> which are marked for deletion.
+    ///     Performs a soft delete by setting the <see cref="IDeletableEntity.DeletedOn" /> and
+    ///     <see cref="IDeletableEntity.IsDeleted" /> properties.
     /// </summary>
-    /// <param name="context">The <see cref="DbContext"/> instance to update.</param>
+    /// <param name="context">The <see cref="DbContext" /> instance to update.</param>
     private static void UpdateDeletableEntities(DbContext context)
     {
         var utcNow = DateTime.UtcNow;

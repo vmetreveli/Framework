@@ -1,12 +1,12 @@
 ﻿namespace Framework.Abstractions.Primitives.Types;
 
 /// <summary>
-/// Represents a base class for types identified by a <see cref="Guid"/>.
+///     Represents a base class for types identified by a <see cref="Guid" />.
 /// </summary>
 public abstract class TypeId : IEquatable<TypeId>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="TypeId"/> class with the specified <see cref="Guid"/>.
+    ///     Initializes a new instance of the <see cref="TypeId" /> class with the specified <see cref="Guid" />.
     /// </summary>
     /// <param name="value">The identifier value.</param>
     protected TypeId(Guid value)
@@ -15,15 +15,15 @@ public abstract class TypeId : IEquatable<TypeId>
     }
 
     /// <summary>
-    /// Gets the identifier value.
+    ///     Gets the identifier value.
     /// </summary>
     public Guid Value { get; }
 
     /// <summary>
-    /// Determines whether the current <see cref="TypeId"/> is equal to another <see cref="TypeId"/>.
+    ///     Determines whether the current <see cref="TypeId" /> is equal to another <see cref="TypeId" />.
     /// </summary>
-    /// <param name="other">The <see cref="TypeId"/> to compare with the current <see cref="TypeId"/>.</param>
-    /// <returns>true if the current <see cref="TypeId"/> is equal to the other <see cref="TypeId"/>; otherwise, false.</returns>
+    /// <param name="other">The <see cref="TypeId" /> to compare with the current <see cref="TypeId" />.</param>
+    /// <returns>true if the current <see cref="TypeId" /> is equal to the other <see cref="TypeId" />; otherwise, false.</returns>
     public bool Equals(TypeId other)
     {
         if (ReferenceEquals(null, other)) return false;
@@ -31,9 +31,9 @@ public abstract class TypeId : IEquatable<TypeId>
     }
 
     /// <summary>
-    /// Determines whether the current <see cref="TypeId"/> is an empty <see cref="Guid"/>.
+    ///     Determines whether the current <see cref="TypeId" /> is an empty <see cref="Guid" />.
     /// </summary>
-    /// <returns>true if the identifier value is an empty <see cref="Guid"/>; otherwise, false.</returns>
+    /// <returns>true if the identifier value is an empty <see cref="Guid" />; otherwise, false.</returns>
     public bool IsEmpty()
     {
         return Value == Guid.Empty;
@@ -54,19 +54,19 @@ public abstract class TypeId : IEquatable<TypeId>
     }
 
     /// <summary>
-    /// Implicitly converts a <see cref="TypeId"/> to its <see cref="Guid"/> value.
+    ///     Implicitly converts a <see cref="TypeId" /> to its <see cref="Guid" /> value.
     /// </summary>
-    /// <param name="typeId">The <see cref="TypeId"/> to convert.</param>
+    /// <param name="typeId">The <see cref="TypeId" /> to convert.</param>
     public static implicit operator Guid(TypeId typeId)
     {
         return typeId.Value;
     }
 
     /// <summary>
-    /// Determines whether two <see cref="TypeId"/> instances are equal.
+    ///     Determines whether two <see cref="TypeId" /> instances are equal.
     /// </summary>
-    /// <param name="a">The first <see cref="TypeId"/> instance.</param>
-    /// <param name="b">The second <see cref="TypeId"/> instance.</param>
+    /// <param name="a">The first <see cref="TypeId" /> instance.</param>
+    /// <param name="b">The second <see cref="TypeId" /> instance.</param>
     /// <returns>true if the two instances are equal; otherwise, false.</returns>
     public static bool operator ==(TypeId a, TypeId b)
     {
@@ -78,10 +78,10 @@ public abstract class TypeId : IEquatable<TypeId>
     }
 
     /// <summary>
-    /// Determines whether two <see cref="TypeId"/> instances are not equal.
+    ///     Determines whether two <see cref="TypeId" /> instances are not equal.
     /// </summary>
-    /// <param name="a">The first <see cref="TypeId"/> instance.</param>
-    /// <param name="b">The second <see cref="TypeId"/> instance.</param>
+    /// <param name="a">The first <see cref="TypeId" /> instance.</param>
+    /// <param name="b">The second <see cref="TypeId" /> instance.</param>
     /// <returns>true if the two instances are not equal; otherwise, false.</returns>
     public static bool operator !=(TypeId a, TypeId b)
     {
@@ -89,9 +89,9 @@ public abstract class TypeId : IEquatable<TypeId>
     }
 
     /// <summary>
-    /// Returns a string representation of the <see cref="TypeId"/>.
+    ///     Returns a string representation of the <see cref="TypeId" />.
     /// </summary>
-    /// <returns>A string representing the <see cref="Guid"/> value of the <see cref="TypeId"/>.</returns>
+    /// <returns>A string representing the <see cref="Guid" /> value of the <see cref="TypeId" />.</returns>
     public override string ToString()
     {
         return Value.ToString();

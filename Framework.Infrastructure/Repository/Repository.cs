@@ -1,14 +1,19 @@
-using System.Linq.Expressions;  // Provides functionality to work with expressions
-using Framework.Abstractions.Primitives;  // Contains the AggregateRoot base class
-using Framework.Abstractions.Repository;  // Contains repository interface definitions
-using Framework.Abstractions.Specifications;  // Provides specifications for querying
+using System.Linq.Expressions;
+using Framework.Abstractions.Primitives;
+using Framework.Abstractions.Repository;
+using Framework.Abstractions.Specifications;
+// Provides functionality to work with expressions
+// Contains the AggregateRoot base class
+// Contains repository interface definitions
+
+// Provides specifications for querying
 
 namespace Framework.Infrastructure.Repository;
 
 /// <summary>
-/// Abstract repository implementation for entity operations using Entity Framework.
-/// This class implements <see cref="IRepository{TEntity, TId}"/> and provides basic CRUD operations
-/// for entities with a specified primary key type.
+///     Abstract repository implementation for entity operations using Entity Framework.
+///     This class implements <see cref="IRepository{TEntity,TId}" /> and provides basic CRUD operations
+///     for entities with a specified primary key type.
 /// </summary>
 /// <typeparam name="TDbContext">The type of the database context used by this repository.</typeparam>
 /// <typeparam name="TEntity">The type of the entity this repository works with.</typeparam>
@@ -19,7 +24,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     where TId : notnull
 {
     /// <summary>
-    /// Asynchronously gets an entity by its identifier.
+    ///     Asynchronously gets an entity by its identifier.
     /// </summary>
     /// <param name="id">The identifier of the entity to retrieve.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -32,7 +37,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously retrieves the first entity matching the given predicate.
+    ///     Asynchronously retrieves the first entity matching the given predicate.
     /// </summary>
     /// <param name="predicate">The predicate to filter entities.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -46,7 +51,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously retrieves the first entity that satisfies the specification.
+    ///     Asynchronously retrieves the first entity that satisfies the specification.
     /// </summary>
     /// <param name="specification">The specification to filter entities.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -59,7 +64,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously retrieves all entities from the database.
+    ///     Asynchronously retrieves all entities from the database.
     /// </summary>
     /// <returns>An asynchronous stream of entities.</returns>
     public virtual IAsyncEnumerable<TEntity> GetAllAsync()
@@ -70,7 +75,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously retrieves all entities from the database as a list.
+    ///     Asynchronously retrieves all entities from the database as a list.
     /// </summary>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A list of entities.</returns>
@@ -82,7 +87,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously finds entities that match the specified predicate.
+    ///     Asynchronously finds entities that match the specified predicate.
     /// </summary>
     /// <param name="predicate">The predicate to filter entities.</param>
     /// <returns>An asynchronous stream of entities.</returns>
@@ -95,7 +100,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously finds entities that satisfy the specification.
+    ///     Asynchronously finds entities that satisfy the specification.
     /// </summary>
     /// <param name="specification">The specification to filter entities.</param>
     /// <returns>An asynchronous stream of entities.</returns>
@@ -106,7 +111,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously finds entities that match the specified predicate and returns them as a list.
+    ///     Asynchronously finds entities that match the specified predicate and returns them as a list.
     /// </summary>
     /// <param name="predicate">The predicate to filter entities.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -121,7 +126,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously finds entities that satisfy the specification and returns them as a list.
+    ///     Asynchronously finds entities that satisfy the specification and returns them as a list.
     /// </summary>
     /// <param name="specification">The specification to filter entities.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -134,7 +139,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously adds a new entity to the database.
+    ///     Asynchronously adds a new entity to the database.
     /// </summary>
     /// <param name="entity">The entity to add.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -146,7 +151,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously adds a range of entities to the database.
+    ///     Asynchronously adds a range of entities to the database.
     /// </summary>
     /// <param name="entities">The entities to add.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -158,7 +163,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously checks if an entity with the specified ID exists.
+    ///     Asynchronously checks if an entity with the specified ID exists.
     /// </summary>
     /// <param name="id">The ID of the entity.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -173,7 +178,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Asynchronously checks if any entities match the specified predicate.
+    ///     Asynchronously checks if any entities match the specified predicate.
     /// </summary>
     /// <param name="predicate">The predicate to filter entities.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -187,7 +192,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Removes an entity from the database.
+    ///     Removes an entity from the database.
     /// </summary>
     /// <param name="entity">The entity to remove.</param>
     public void Remove(TEntity entity)
@@ -198,7 +203,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Removes a range of entities from the database.
+    ///     Removes a range of entities from the database.
     /// </summary>
     /// <param name="entities">The entities to remove.</param>
     public void RemoveRange(IEnumerable<TEntity> entities)
@@ -209,7 +214,7 @@ public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) :
     }
 
     /// <summary>
-    /// Applies the given specification to the entity query.
+    ///     Applies the given specification to the entity query.
     /// </summary>
     /// <param name="specification">The specification to apply.</param>
     /// <returns>An IQueryable representing the filtered entity set.</returns>

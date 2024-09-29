@@ -4,7 +4,7 @@ using MassTransit;
 namespace Framework.Abstractions.Events;
 
 /// <summary>
-/// Defines a consumer for handling integration events.
+///     Defines a consumer for handling integration events.
 /// </summary>
 /// <typeparam name="T">The type of the integration event to be handled.</typeparam>
 public interface IEventConsumer<T> : IConsumer<T> where T : IntegrationBaseEvent

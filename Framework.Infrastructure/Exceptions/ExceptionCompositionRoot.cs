@@ -3,16 +3,16 @@
 namespace Framework.Infrastructure.Exceptions;
 
 /// <summary>
-/// The entry point for handling exceptions by delegating them to registered exception mappers.
-/// This class is responsible for composing different mappers to process exceptions.
+///     The entry point for handling exceptions by delegating them to registered exception mappers.
+///     This class is responsible for composing different mappers to process exceptions.
 /// </summary>
 internal sealed class ExceptionCompositionRoot(IServiceProvider serviceProvider) : IExceptionCompositionRoot
 {
     /// <summary>
-    /// Maps the provided exception to an <see cref="ExceptionResponse"/> using the available exception mappers.
+    ///     Maps the provided exception to an <see cref="ExceptionResponse" /> using the available exception mappers.
     /// </summary>
     /// <param name="exception">The exception to map.</param>
-    /// <returns>An <see cref="ExceptionResponse"/> with the appropriate error details and HTTP status code.</returns>
+    /// <returns>An <see cref="ExceptionResponse" /> with the appropriate error details and HTTP status code.</returns>
     public ExceptionResponse Map(Exception exception)
     {
         // Create a new scope to resolve services from the DI container.

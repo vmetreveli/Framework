@@ -5,7 +5,7 @@ using Framework.Abstractions.Specifications;
 namespace Framework.Abstractions.Repository;
 
 /// <summary>
-/// Defines the contract for a repository that manages the persistence and retrieval of entities.
+///     Defines the contract for a repository that manages the persistence and retrieval of entities.
 /// </summary>
 /// <typeparam name="TEntity">The type of the entity managed by the repository.</typeparam>
 /// <typeparam name="TId">The type of the entity identifier.</typeparam>
@@ -14,7 +14,7 @@ public interface IRepository<TEntity, TId>
     where TId : notnull
 {
     /// <summary>
-    /// Asynchronously retrieves an entity by its identifier.
+    ///     Asynchronously retrieves an entity by its identifier.
     /// </summary>
     /// <param name="id">The identifier of the entity to retrieve.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -22,7 +22,7 @@ public interface IRepository<TEntity, TId>
     Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Asynchronously retrieves the first entity that matches the specified predicate.
+    ///     Asynchronously retrieves the first entity that matches the specified predicate.
     /// </summary>
     /// <param name="predicate">An expression that defines the criteria to filter entities.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -31,7 +31,7 @@ public interface IRepository<TEntity, TId>
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Asynchronously retrieves the first entity that matches the specified specification.
+    ///     Asynchronously retrieves the first entity that matches the specified specification.
     /// </summary>
     /// <param name="specification">A specification defining the criteria to filter entities.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -40,34 +40,34 @@ public interface IRepository<TEntity, TId>
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Retrieves all entities asynchronously.
+    ///     Retrieves all entities asynchronously.
     /// </summary>
     /// <returns>An asynchronous sequence of all entities.</returns>
     IAsyncEnumerable<TEntity> GetAllAsync();
 
     /// <summary>
-    /// Asynchronously retrieves all entities.
+    ///     Asynchronously retrieves all entities.
     /// </summary>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation, with a result of a list of all entities.</returns>
     Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Retrieves entities that match the specified predicate asynchronously.
+    ///     Retrieves entities that match the specified predicate asynchronously.
     /// </summary>
     /// <param name="predicate">An expression that defines the criteria to filter entities.</param>
     /// <returns>An asynchronous sequence of entities that match the predicate.</returns>
     IAsyncEnumerable<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate);
 
     /// <summary>
-    /// Retrieves entities that match the specified specification asynchronously.
+    ///     Retrieves entities that match the specified specification asynchronously.
     /// </summary>
     /// <param name="specification">A specification defining the criteria to filter entities.</param>
     /// <returns>An asynchronous sequence of entities that match the specification.</returns>
     IAsyncEnumerable<TEntity> FindAsync(Specification<TEntity, TId> specification);
 
     /// <summary>
-    /// Asynchronously retrieves entities that match the specified predicate.
+    ///     Asynchronously retrieves entities that match the specified predicate.
     /// </summary>
     /// <param name="predicate">An expression that defines the criteria to filter entities.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -76,16 +76,19 @@ public interface IRepository<TEntity, TId>
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Asynchronously retrieves entities that match the specified specification.
+    ///     Asynchronously retrieves entities that match the specified specification.
     /// </summary>
     /// <param name="specification">A specification defining the criteria to filter entities.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <returns>A task representing the asynchronous operation, with a result of a list of entities that match the specification.</returns>
+    /// <returns>
+    ///     A task representing the asynchronous operation, with a result of a list of entities that match the
+    ///     specification.
+    /// </returns>
     Task<IEnumerable<TEntity>> FindAsync(Specification<TEntity, TId> specification,
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Asynchronously checks if an entity with the specified identifier exists.
+    ///     Asynchronously checks if an entity with the specified identifier exists.
     /// </summary>
     /// <param name="id">The identifier of the entity to check.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -93,16 +96,19 @@ public interface IRepository<TEntity, TId>
     Task<bool> ExistsAsync(TId id, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Asynchronously checks if an entity that matches the specified predicate exists.
+    ///     Asynchronously checks if an entity that matches the specified predicate exists.
     /// </summary>
     /// <param name="predicate">An expression that defines the criteria to filter entities.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <returns>A task representing the asynchronous operation, with a result indicating whether an entity that matches the predicate exists.</returns>
+    /// <returns>
+    ///     A task representing the asynchronous operation, with a result indicating whether an entity that matches the
+    ///     predicate exists.
+    /// </returns>
     Task<bool> ExistsAsync(Expression<Func<TEntity, bool>> predicate,
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Asynchronously adds a new entity to the repository.
+    ///     Asynchronously adds a new entity to the repository.
     /// </summary>
     /// <param name="entity">The entity to add.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -110,7 +116,7 @@ public interface IRepository<TEntity, TId>
     Task AddAsync(TEntity entity, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Asynchronously adds a range of entities to the repository.
+    ///     Asynchronously adds a range of entities to the repository.
     /// </summary>
     /// <param name="entities">The entities to add.</param>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
@@ -118,13 +124,13 @@ public interface IRepository<TEntity, TId>
     Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Removes an entity from the repository.
+    ///     Removes an entity from the repository.
     /// </summary>
     /// <param name="entity">The entity to remove.</param>
     void Remove(TEntity entity);
 
     /// <summary>
-    /// Removes a range of entities from the repository.
+    ///     Removes a range of entities from the repository.
     /// </summary>
     /// <param name="entities">The entities to remove.</param>
     void RemoveRange(IEnumerable<TEntity> entities);

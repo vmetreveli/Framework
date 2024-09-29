@@ -5,8 +5,8 @@ using Quartz;
 namespace Framework.Infrastructure.Jobs;
 
 /// <summary>
-/// Represents a Quartz job responsible for processing and dispatching outbox messages.
-/// The job ensures that messages are only dispatched once by using outbox messaging patterns.
+///     Represents a Quartz job responsible for processing and dispatching outbox messages.
+///     The job ensures that messages are only dispatched once by using outbox messaging patterns.
 /// </summary>
 [DisallowConcurrentExecution] // Ensures the job does not run concurrently.
 public class OutboxJob(
@@ -14,7 +14,8 @@ public class OutboxJob(
     IEventDispatcher messagePublisher) : IJob
 {
     /// <summary>
-    /// Executes the outbox job, fetching all ready-to-send messages from the outbox and dispatching them via the event dispatcher.
+    ///     Executes the outbox job, fetching all ready-to-send messages from the outbox and dispatching them via the event
+    ///     dispatcher.
     /// </summary>
     /// <param name="context">The context in which the job is executed, containing runtime information.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
@@ -31,9 +32,7 @@ public class OutboxJob(
 
         // Recreate the integration event from each outbox message and publish it using the event dispatcher.
         foreach (var eventMessage in readyToSendItems.Select(item => item.RecreateMessage()))
-        {
             // Publish the recreated integration event asynchronously.
             await messagePublisher.PublishIntegrationEventAsync(eventMessage);
-        }
     }
 }
