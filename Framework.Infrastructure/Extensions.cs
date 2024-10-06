@@ -223,7 +223,8 @@ public static class Extensions
             consumer.AddRange(assembly.GetTypes()
                 .Where(type => type.IsClass && !type.IsAbstract)
                 .Where(type => type.GetInterfaces()
-                    .Any(interfaceType =>
+                    .ToList()
+                    .Exists(interfaceType =>
                         interfaceType.IsGenericType &&
                         interfaceType.GetGenericTypeDefinition() == consumerInterfaceType)));
 
@@ -236,6 +237,7 @@ public static class Extensions
     /// <typeparam name="T">The type of the Quartz job to schedule.</typeparam>
     /// <param name="quartz">The Quartz.NET configuration object.</param>
     /// <param name="config">The configuration object used to retrieve the cron schedule.</param>
+    /// <exception cref="Exception"></exception>
     private static void AddJobAndTrigger<T>(
         this IServiceCollectionQuartzConfigurator quartz,
         IConfiguration config)
@@ -247,7 +249,7 @@ public static class Extensions
 
         // Validate that the cron schedule exists
         if (string.IsNullOrEmpty(cronSchedule))
-            throw new Exception($"No Quartz.NET Cron schedule found for job in configuration at {configKey}");
+            throw new FrameworkException($"No Quartz.NET Cron schedule found for job in configuration at {configKey}");
 
         var jobKey = new JobKey(jobName);
 

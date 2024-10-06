@@ -1,3 +1,6 @@
+using Framework.Abstractions.Primitives.Types;
+using Newtonsoft.Json;
+
 namespace Framework.Infrastructure.Interceptors;
 
 public sealed class InsertOutboxMessagesInterceptor : SaveChangesInterceptor
@@ -7,41 +10,37 @@ public sealed class InsertOutboxMessagesInterceptor : SaveChangesInterceptor
     {
         if (eventData.Context is not null)
         {
-            ConvertDomainEventsToOutboxMessages(eventData.Context);
-            ConvertDomainEventsToOutboxMessages(eventData.Context);
+            _ = ConvertDomainEventsToOutboxMessages(eventData.Context);
+            _ = ConvertDomainEventsToOutboxMessages(eventData.Context);
         }
 
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    private static async void ConvertDomainEventsToOutboxMessages(DbContext context)
+    private static async  Task<Task> ConvertDomainEventsToOutboxMessages(DbContext context)
     {
-        // var outboxMessages = context.ChangeTracker
-        //     .Entries<IAggregateRoot>()
-        //     .Select(x => x.Entity)
-        //     .SelectMany(aggregateRoot =>
-        //     {
-        //         var domainEvents = aggregateRoot.GetDomainEvents();
-        //
-        //         aggregateRoot.ClearDomainEvents();
-        //
-        //         return domainEvents;
-        //     })
-        //     .Select(domainEvent => new OutboxMessage
-        //     {
-        //         Id = Guid.NewGuid(),
-        //         OccurredOnUtc = DateTime.UtcNow,
-        //         Type = domainEvent.GetType().Name,
-        //         Content = JsonConvert.SerializeObject(
-        //             domainEvent,
-        //             new JsonSerializerSettings
-        //             {
-        //                 TypeNameHandling = TypeNameHandling.All
-        //             })
-        //     })
-        //     .ToList();
-        //
-        // await context.Set<OutboxMessage>()
-        //     .AddRangeAsync(outboxMessages);
+        var outboxMessages = context.ChangeTracker
+            .Entries<IAggregateRoot>()
+            .Select(x => x.Entity)
+            .SelectMany(aggregateRoot =>
+            {
+                var domainEvents = aggregateRoot.GetDomainEvents();
+
+                aggregateRoot.ClearDomainEvents();
+
+                return domainEvents;
+            })
+            .Select(domainEvent => new OutboxMessage(
+                JsonConvert.SerializeObject(
+                    domainEvent,
+                    new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    }), Guid.NewGuid(), DateTime.UtcNow))
+            .ToList();
+
+        await context.Set<OutboxMessage>()
+            .AddRangeAsync(outboxMessages);
+        return Task.CompletedTask;
     }
 }

@@ -43,7 +43,7 @@ public sealed class OutboxMessage : AggregateRoot<Guid>
     /// <summary>
     ///     Gets the full name and assembly name of the message type.
     /// </summary>
-    public string Type { get; }
+    public string Type { get; set; }
 
     /// <summary>
     ///     Gets or sets the unique identifier for the event associated with the message.
@@ -53,7 +53,7 @@ public sealed class OutboxMessage : AggregateRoot<Guid>
     /// <summary>
     ///     Gets or sets the date when the event occurred.
     /// </summary>
-    public DateTime EventDate { get; private set; }
+    public DateTime EventDate { get; set; }
 
     /// <summary>
     ///     Gets or sets the state of the outbox message.
@@ -64,6 +64,8 @@ public sealed class OutboxMessage : AggregateRoot<Guid>
     ///     Gets or sets the date when the outbox message was last modified.
     /// </summary>
     public DateTime ModifiedDate { get; set; }
+
+    public string Content { get; set; }
 
     /// <summary>
     ///     Changes the state of the outbox message and updates the modification date.
