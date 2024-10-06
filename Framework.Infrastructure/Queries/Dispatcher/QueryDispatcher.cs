@@ -1,12 +1,12 @@
 ﻿namespace Framework.Infrastructure.Queries.Dispatcher;
 
 /// <summary>
-/// Dispatches queries to the appropriate query handler using the dependency injection service provider.
+///     Dispatches queries to the appropriate query handler using the dependency injection service provider.
 /// </summary>
 public sealed class QueryDispatcher(IServiceProvider serviceProvider) : IQueryDispatcher
 {
     /// <summary>
-    /// Asynchronously dispatches the specified query to the corresponding handler and returns the result.
+    ///     Asynchronously dispatches the specified query to the corresponding handler and returns the result.
     /// </summary>
     /// <typeparam name="TResult">The result type expected from the query.</typeparam>
     /// <param name="query">The query to dispatch.</param>

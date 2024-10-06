@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace Framework.Abstractions.Outbox;
 
 /// <summary>
-/// Represents an outbox message for handling asynchronous operations.
+///     Represents an outbox message for handling asynchronous operations.
 /// </summary>
 public sealed class OutboxMessage : AggregateRoot<Guid>
 {
@@ -14,7 +14,7 @@ public sealed class OutboxMessage : AggregateRoot<Guid>
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="OutboxMessage"/> class.
+    ///     Creates a new instance of the <see cref="OutboxMessage" /> class.
     /// </summary>
     /// <param name="message">The message to be stored in the outbox.</param>
     /// <param name="eventId">The identifier for the event.</param>
@@ -36,37 +36,39 @@ public sealed class OutboxMessage : AggregateRoot<Guid>
     }
 
     /// <summary>
-    /// Gets the serialized message data.
+    ///     Gets the serialized message data.
     /// </summary>
     public string Data { get; }
 
     /// <summary>
-    /// Gets the full name and assembly name of the message type.
+    ///     Gets the full name and assembly name of the message type.
     /// </summary>
-    public string Type { get; }
+    public string Type { get; set; }
 
     /// <summary>
-    /// Gets or sets the unique identifier for the event associated with the message.
+    ///     Gets or sets the unique identifier for the event associated with the message.
     /// </summary>
     public Guid EventId { get; private set; }
 
     /// <summary>
-    /// Gets or sets the date when the event occurred.
+    ///     Gets or sets the date when the event occurred.
     /// </summary>
-    public DateTime EventDate { get; private set; }
+    public DateTime EventDate { get; set; }
 
     /// <summary>
-    /// Gets or sets the state of the outbox message.
+    ///     Gets or sets the state of the outbox message.
     /// </summary>
     public OutboxMessageState State { get; private set; }
 
     /// <summary>
-    /// Gets or sets the date when the outbox message was last modified.
+    ///     Gets or sets the date when the outbox message was last modified.
     /// </summary>
     public DateTime ModifiedDate { get; set; }
 
+    public string Content { get; set; }
+
     /// <summary>
-    /// Changes the state of the outbox message and updates the modification date.
+    ///     Changes the state of the outbox message and updates the modification date.
     /// </summary>
     /// <param name="state">The new state of the outbox message.</param>
     public void ChangeState(OutboxMessageState state)
@@ -76,7 +78,7 @@ public sealed class OutboxMessage : AggregateRoot<Guid>
     }
 
     /// <summary>
-    /// Recreates the original message object from the stored data.
+    ///     Recreates the original message object from the stored data.
     /// </summary>
     /// <returns>The deserialized message object.</returns>
     public dynamic? RecreateMessage()

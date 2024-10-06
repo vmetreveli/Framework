@@ -1,14 +1,14 @@
 ﻿namespace Framework.Infrastructure.Commands;
 
 /// <summary>
-/// The command dispatcher class responsible for dispatching commands to the appropriate handlers.
-/// Implements <see cref="ICommandDispatcher"/>.
+///     The command dispatcher class responsible for dispatching commands to the appropriate handlers.
+///     Implements <see cref="ICommandDispatcher" />.
 /// </summary>
-/// <param name="serviceProvider">The <see cref="IServiceProvider"/> used to resolve dependencies.</param>
+/// <param name="serviceProvider">The <see cref="IServiceProvider" /> used to resolve dependencies.</param>
 public sealed class CommandDispatcher(IServiceProvider serviceProvider) : ICommandDispatcher
 {
     /// <summary>
-    /// Dispatches a command of type <typeparamref name="TCommand"/> to its corresponding handler.
+    ///     Dispatches a command of type <typeparamref name="TCommand" /> to its corresponding handler.
     /// </summary>
     /// <typeparam name="TCommand">The type of the command to dispatch.</typeparam>
     /// <param name="command">The command instance to be handled.</param>
@@ -28,7 +28,8 @@ public sealed class CommandDispatcher(IServiceProvider serviceProvider) : IComma
     }
 
     /// <summary>
-    /// Dispatches a command of type <typeparamref name="TCommand"/> and returns a result of type <typeparamref name="TResult"/>.
+    ///     Dispatches a command of type <typeparamref name="TCommand" /> and returns a result of type
+    ///     <typeparamref name="TResult" />.
     /// </summary>
     /// <typeparam name="TCommand">The type of the command to dispatch.</typeparam>
     /// <typeparam name="TResult">The type of the result returned by the handler.</typeparam>

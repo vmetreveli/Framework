@@ -7,8 +7,8 @@ using MassTransit;
 namespace Framework.Infrastructure.Events;
 
 /// <summary>
-/// EventDispatcher is responsible for dispatching domain events and integration events.
-/// It leverages a service provider to resolve event handlers and a publish endpoint for sending integration events.
+///     EventDispatcher is responsible for dispatching domain events and integration events.
+///     It leverages a service provider to resolve event handlers and a publish endpoint for sending integration events.
 /// </summary>
 public class EventDispatcher(
     IServiceProvider serviceProvider,
@@ -17,7 +17,7 @@ public class EventDispatcher(
     IUnitOfWork unitOfWork) : IEventDispatcher
 {
     /// <summary>
-    /// Publishes a domain event asynchronously by invoking all registered event handlers for the given event type.
+    ///     Publishes a domain event asynchronously by invoking all registered event handlers for the given event type.
     /// </summary>
     /// <typeparam name="TEvent">The type of domain event being published.</typeparam>
     /// <param name="event">The event instance to be published.</param>
@@ -28,10 +28,10 @@ public class EventDispatcher(
         where TEvent : IDomainEvent
     {
         using var scope = serviceProvider.CreateScope();
-            
+
         // Resolves all registered event handlers for the event type.
         var handlers = scope.ServiceProvider.GetServices<IEventHandler<IEvent>>();
-            
+
         // If there are any handlers, execute them asynchronously.
         if (handlers.Any())
         {
@@ -41,8 +41,8 @@ public class EventDispatcher(
     }
 
     /// <summary>
-    /// Publishes an integration event asynchronously by sending it to the configured message broker.
-    /// If the event cannot be published, it is stored in the outbox for retrying.
+    ///     Publishes an integration event asynchronously by sending it to the configured message broker.
+    ///     If the event cannot be published, it is stored in the outbox for retrying.
     /// </summary>
     /// <typeparam name="TEvent">The type of integration event being published.</typeparam>
     /// <param name="event">The integration event instance to be published.</param>
@@ -56,7 +56,7 @@ public class EventDispatcher(
         {
             // Publish the integration event to the message broker using MassTransit.
             await publisher.Publish(@event, cancellationToken);
-                
+
             // If the publish succeeds, update the corresponding outbox message state to 'Completed'.
             await repository.UpdateOutboxMessageState(@event.Id, OutboxMessageState.Completed);
         }

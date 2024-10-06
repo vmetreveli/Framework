@@ -4,18 +4,18 @@ using Microsoft.EntityFrameworkCore;
 namespace Framework.Abstractions.Specifications;
 
 /// <summary>
-/// Provides methods for evaluating and applying specifications to an <see cref="IQueryable{TEntity}"/>.
+///     Provides methods for evaluating and applying specifications to an <see cref="IQueryable{TEntity}" />.
 /// </summary>
 public static class SpecificationEvaluator
 {
     /// <summary>
-    /// Applies the given <see cref="Specification{TEntity, TId}"/> to the provided <see cref="IQueryable{TEntity}"/>.
+    ///     Applies the given <see cref="Specification{TEntity, TId}" /> to the provided <see cref="IQueryable{TEntity}" />.
     /// </summary>
     /// <typeparam name="TEntity">The type of the entities in the query.</typeparam>
     /// <typeparam name="TId">The type of the entity's identifier.</typeparam>
     /// <param name="inputQueryable">The initial queryable to which the specification will be applied.</param>
     /// <param name="specification">The specification containing criteria, includes, ordering, and tracking information.</param>
-    /// <returns>An <see cref="IQueryable{TEntity}"/> that reflects the applied specification.</returns>
+    /// <returns>An <see cref="IQueryable{TEntity}" /> that reflects the applied specification.</returns>
     public static IQueryable<TEntity> GetQuery<TEntity, TId>(
         IQueryable<TEntity> inputQueryable, Specification<TEntity, TId> specification)
         where TEntity : EntityBase<TId>

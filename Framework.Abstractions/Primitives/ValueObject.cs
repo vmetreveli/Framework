@@ -1,13 +1,13 @@
 ﻿namespace Framework.Abstractions.Primitives;
 
 /// <summary>
-/// Represents the base class all value objects derive from.
-/// Value objects are compared based on their values rather than their identities.
+///     Represents the base class all value objects derive from.
+///     Value objects are compared based on their values rather than their identities.
 /// </summary>
 public abstract class ValueObject : IEquatable<ValueObject>
 {
     /// <summary>
-    /// Compares this instance with another value object for equality.
+    ///     Compares this instance with another value object for equality.
     /// </summary>
     /// <param name="other">The other value object to compare with.</param>
     /// <returns>True if the other value object is equal to this instance; otherwise, false.</returns>
@@ -19,7 +19,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
     }
 
     /// <summary>
-    /// Determines if two value objects are equal.
+    ///     Determines if two value objects are equal.
     /// </summary>
     /// <param name="a">The first value object.</param>
     /// <param name="b">The second value object.</param>
@@ -34,7 +34,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
     }
 
     /// <summary>
-    /// Determines if two value objects are not equal.
+    ///     Determines if two value objects are not equal.
     /// </summary>
     /// <param name="a">The first value object.</param>
     /// <param name="b">The second value object.</param>
@@ -45,7 +45,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
     }
 
     /// <summary>
-    /// Checks if this instance is equal to another object.
+    ///     Checks if this instance is equal to another object.
     /// </summary>
     /// <param name="obj">The object to compare with.</param>
     /// <returns>True if the object is equal to this instance; otherwise, false.</returns>
@@ -61,7 +61,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
     }
 
     /// <summary>
-    /// Computes a hash code for this instance.
+    ///     Computes a hash code for this instance.
     /// </summary>
     /// <returns>The hash code for this instance.</returns>
     public override int GetHashCode()
@@ -75,8 +75,8 @@ public abstract class ValueObject : IEquatable<ValueObject>
     }
 
     /// <summary>
-    /// Gets the atomic values of the value object.
-    /// This method should be overridden in derived classes to return the values that make up the value object.
+    ///     Gets the atomic values of the value object.
+    ///     This method should be overridden in derived classes to return the values that make up the value object.
     /// </summary>
     /// <returns>The collection of objects representing the value object values.</returns>
     public abstract IEnumerable<object> GetAtomicValues();

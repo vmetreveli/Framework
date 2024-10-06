@@ -6,8 +6,8 @@ using Humanizer;
 namespace Framework.Infrastructure.Exceptions;
 
 /// <summary>
-/// Maps exceptions to standardized HTTP responses. This class is responsible for
-/// translating exceptions into responses with meaningful error codes and messages.
+///     Maps exceptions to standardized HTTP responses. This class is responsible for
+///     translating exceptions into responses with meaningful error codes and messages.
 /// </summary>
 internal sealed class ExceptionToResponseMapper : IExceptionToResponseMapper
 {
@@ -15,10 +15,10 @@ internal sealed class ExceptionToResponseMapper : IExceptionToResponseMapper
     private static readonly ConcurrentDictionary<Type, string> Codes = new();
 
     /// <summary>
-    /// Maps the provided exception to a corresponding HTTP response with an error message.
+    ///     Maps the provided exception to a corresponding HTTP response with an error message.
     /// </summary>
     /// <param name="exception">The exception that occurred.</param>
-    /// <returns>An <see cref="ExceptionResponse"/> containing error details and the HTTP status code.</returns>
+    /// <returns>An <see cref="ExceptionResponse" /> containing error details and the HTTP status code.</returns>
     public ExceptionResponse Map(Exception exception)
     {
         // Match different exception types and generate appropriate responses.
@@ -36,8 +36,8 @@ internal sealed class ExceptionToResponseMapper : IExceptionToResponseMapper
     }
 
     /// <summary>
-    /// Retrieves the error code for the given exception type, generating and caching it if necessary.
-    /// The error code is based on the exception type's name.
+    ///     Retrieves the error code for the given exception type, generating and caching it if necessary.
+    ///     The error code is based on the exception type's name.
     /// </summary>
     /// <param name="exception">The exception for which to generate or retrieve an error code.</param>
     /// <returns>A string representing the error code.</returns>
