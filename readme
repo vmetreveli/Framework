@@ -1,4 +1,3 @@
-Here’s a styled and organized version of your GitHub README:
 Framework Overview
 
 This framework is designed to make development easier by integrating essential features like MediatR, message bus (MassTransit with RabbitMQ), and Domain-Driven Design (DDD) principles. It helps in building scalable, maintainable, and distributed applications with minimal complexity.
