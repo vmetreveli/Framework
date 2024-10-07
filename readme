@@ -1,1 +1,29 @@
 It is a framework designed to make life easier.
+
+For Using This framework Need To Registered
+
+Services.AddFramework(configuration, typeof(DependencyInjection).Assembly);
+
+
+MediatR, MessageBus, DDD
+
+
+
+This registers:
+----------------
+    IDispatcher as transient
+    IEventDispatcher as transient
+   
+    ICommandHandler<,> concrete implementations as transient
+    IQueryHandler<,>  concrete implementations as transient
+    IEventHandler<>  concrete implementations as transient
+   
+
+This also registers open generic implementations for:
+
+    INotificationHandler<>
+    IRequestExceptionHandler<,,>
+    IRequestExceptionAction<,>
+
+-------------- 
+EntityBase. AggregateRoot, Repository, UnitOfWork, Exception, ValueObject,
