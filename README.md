@@ -1,5 +1,28 @@
 Framework Overview
 
+🐇 "In the meadow where knowledge grows,
+A readme blooms, as wisdom flows.
+With features bright and guidance clear,
+Hop along, dear user, have no fear!
+Integration's dance, a joyful song,
+In this framework, you can't go wrong!" 🎉
+
+Sequence Diagram(s)
+```mermaid
+sequenceDiagram
+    participant User
+    participant Framework
+    participant MediatR
+    participant MassTransit
+    participant DDD
+
+    User->>Framework: Register Framework
+    Framework->>MediatR: Integrate MediatR
+    Framework->>MassTransit: Setup Message Bus
+    Framework->>DDD: Apply DDD Principles
+    Framework->>User: Provide Usage Instructions
+```
+
 This framework is designed to make development easier by integrating essential features like MediatR, message bus (MassTransit with RabbitMQ), and Domain-Driven Design (DDD) principles. It helps in building scalable, maintainable, and distributed applications with minimal complexity.
 Getting Started
 
