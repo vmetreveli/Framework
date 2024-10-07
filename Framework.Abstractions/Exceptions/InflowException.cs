@@ -1,8 +1,3 @@
 ﻿namespace Framework.Abstractions.Exceptions;
 
-public abstract class InflowException : Exception
-{
-    protected InflowException(string message) : base(message)
-    {
-    }
-}
+public abstract class InflowException(string message) : Exception(message);
