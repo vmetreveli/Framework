@@ -14,7 +14,7 @@ namespace Framework.Infrastructure.Repository;
 ///     <see cref="OutboxMessage" />.
 /// </summary>
 public class OutboxRepository(BaseDbContext context)
-    : Repository<BaseDbContext, OutboxMessage, Guid>(context), IOutboxRepository
+    : RepositoryBase<BaseDbContext, OutboxMessage, Guid>(context), IOutboxRepository
 {
     /// <summary>
     ///     Creates a new outbox message if a message with the same <see cref="OutboxMessage.EventId" /> doesn't already exist.

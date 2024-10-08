@@ -1,4 +1,5 @@
-﻿using Framework.Abstractions.Events;
+﻿using AutoMapper.Extensions.ExpressionMapping;
+using Framework.Abstractions.Events;
 using Framework.Abstractions.Exceptions;
 using Framework.Abstractions.Repository;
 using Framework.Infrastructure.Context;
@@ -45,6 +46,12 @@ public static class Extensions
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();
             });
+        
+         services
+            .AddAutoMapper(cfg =>
+                    cfg.AddExpressionMapping(),
+                Assembly.GetExecutingAssembly());
+         
         return services;
     }
 
