@@ -18,7 +18,7 @@ namespace Framework.Infrastructure.Repository;
 /// <typeparam name="TDbContext">The type of the database context used by this repository.</typeparam>
 /// <typeparam name="TEntity">The type of the entity this repository works with.</typeparam>
 /// <typeparam name="TId">The type of the entity's primary key.</typeparam>
-public abstract class Repository<TDbContext, TEntity, TId>(TDbContext context) : IRepository<TEntity, TId>
+public abstract class RepositoryBase<TDbContext, TEntity, TId>(TDbContext context) : IRepositoryBase<TEntity, TId>
     where TDbContext : DbContext
     where TEntity : AggregateRoot<TId>
     where TId : notnull

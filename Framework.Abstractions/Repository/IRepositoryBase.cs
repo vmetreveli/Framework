@@ -9,7 +9,7 @@ namespace Framework.Abstractions.Repository;
 /// </summary>
 /// <typeparam name="TEntity">The type of the entity managed by the repository.</typeparam>
 /// <typeparam name="TId">The type of the entity identifier.</typeparam>
-public interface IRepository<TEntity, TId>
+public interface IRepositoryBase<TEntity, TId>
     where TEntity : AggregateRoot<TId>
     where TId : notnull
 {
