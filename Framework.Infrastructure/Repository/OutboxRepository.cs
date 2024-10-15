@@ -1,6 +1,7 @@
 ﻿using Framework.Abstractions.Outbox;
 using Framework.Abstractions.Repository;
 using Framework.Infrastructure.Context;
+
 // Contains the definitions for outbox-related entities and interfaces
 // Contains repository interface definitions
 

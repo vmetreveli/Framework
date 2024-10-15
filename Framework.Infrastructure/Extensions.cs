@@ -46,12 +46,12 @@ public static class Extensions
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();
             });
-        
-         services
+
+        services
             .AddAutoMapper(cfg =>
                     cfg.AddExpressionMapping(),
                 Assembly.GetExecutingAssembly());
-         
+
         return services;
     }
 
