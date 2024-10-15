@@ -132,7 +132,8 @@ public class InflowException : Exception
     }
 
     [ExcludeFromCodeCoverage]
-    public InflowException(Enum code, IStringLocalizer localizer, string message, Exception innerException, LogLevel logLevel)
+    public InflowException(Enum code, IStringLocalizer localizer, string message, Exception innerException,
+        LogLevel logLevel)
         : this(code.ToString(), localizer[code.ToString()], message, innerException, logLevel)
     {
     }
@@ -156,26 +157,31 @@ public class InflowException : Exception
     }
 
     [ExcludeFromCodeCoverage]
-    public InflowException(Enum code, IStringLocalizer localizer, object[] localizerArguments, string message, LogLevel logLevel)
+    public InflowException(Enum code, IStringLocalizer localizer, object[] localizerArguments, string message,
+        LogLevel logLevel)
         : this(code.ToString(), localizer[code.ToString(), localizerArguments], message, null, logLevel)
     {
     }
 
     [ExcludeFromCodeCoverage]
-    public InflowException(Enum code, IStringLocalizer localizer, object[] localizerArguments, string message, Exception innerException)
-        : this(code.ToString(), localizer[code.ToString(), localizerArguments], message, innerException, LogLevel.Warning)
+    public InflowException(Enum code, IStringLocalizer localizer, object[] localizerArguments, string message,
+        Exception innerException)
+        : this(code.ToString(), localizer[code.ToString(), localizerArguments], message, innerException,
+            LogLevel.Warning)
     {
     }
 
     [ExcludeFromCodeCoverage]
-    public InflowException(Enum code, IStringLocalizer localizer, object[] localizerArguments, string message, Exception innerException, LogLevel logLevel)
+    public InflowException(Enum code, IStringLocalizer localizer, object[] localizerArguments, string message,
+        Exception innerException, LogLevel logLevel)
         : this(code.ToString(), localizer[code.ToString(), localizerArguments], message, innerException, logLevel)
     {
     }
 
     public string Code { get; set; }
 
-    [SuppressMessage("Security", "SensitiveDataAnalyzer:Property contains sensitive data", Justification = "Not needed")]
+    [SuppressMessage("Security", "SensitiveDataAnalyzer:Property contains sensitive data",
+        Justification = "Not needed")]
     public string Title { get; set; }
 
     public LogLevel LogLevel { get; set; }

@@ -12,11 +12,12 @@ using Activity = System.Diagnostics.Activity;
 namespace Framework.Infrastructure.Exceptions;
 
 /// <summary>
-/// Catches exceptions and constructs ApiProblemDetails for the response.
+///     Catches exceptions and constructs ApiProblemDetails for the response.
 /// </summary>
 public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
+
     private readonly Dictionary<Type, int> _statusCodes = new()
     {
         { typeof(InflowException), StatusCodes.Status400BadRequest },
@@ -32,14 +33,11 @@ public class ExceptionMiddleware
 
     public ExceptionMiddleware(RequestDelegate next, Dictionary<Type, int> statusCodes)
     {
-     _next = next;  
-        foreach (KeyValuePair<Type, int> statusCode in statusCodes)
-        {
-            this._statusCodes[statusCode.Key] = statusCode.Value;
-        }
+        _next = next;
+        foreach (var statusCode in statusCodes) _statusCodes[statusCode.Key] = statusCode.Value;
     }
 
-    public  async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context)
     {
         try
         {
@@ -86,7 +84,7 @@ public class ExceptionMiddleware
         {
             ApiProblemDetails apiProblemDetails = new()
             {
-                Status = _statusCodes.TryGetValue(ex.GetType(), out int statusCode)
+                Status = _statusCodes.TryGetValue(ex.GetType(), out var statusCode)
                     ? statusCode
                     : _statusCodes[typeof(InflowException)],
                 Type = ex.Code,
@@ -97,24 +95,13 @@ public class ExceptionMiddleware
             };
 
             if (ex is AppValidationException appValidationException)
-            {
                 apiProblemDetails.ValidationErrors =
                     appValidationException.Failures.ToDictionary(failure => failure.Key, failure => failure.Value);
-            }
-            else if (ex is HttpException httpException)
-            {
-                apiProblemDetails.ExternalEndpoint = httpException.Endpoint;
-            }
+            else if (ex is HttpException httpException) apiProblemDetails.ExternalEndpoint = httpException.Endpoint;
 
-            foreach (DictionaryEntry item in ex.Data)
-            {
-                apiProblemDetails.Extensions.Add(item.Key.ToString(), item.Value);
-            }
+            foreach (DictionaryEntry item in ex.Data) apiProblemDetails.Extensions.Add(item.Key.ToString(), item.Value);
 
-            foreach (KeyValuePair<string, string> item in ex.ResponseHeaders)
-            {
-                context.Response.Headers.Append(item.Key, item.Value);
-            }
+            foreach (var item in ex.ResponseHeaders) context.Response.Headers.Append(item.Key, item.Value);
 
             await SetResponse(context, apiProblemDetails);
         }
@@ -130,10 +117,7 @@ public class ExceptionMiddleware
             {
                 externalApiProblemDetails = ex.DeserializeContent<ApiProblemDetails>();
 
-                if (externalApiProblemDetails?.IsApiProblemDetails != true)
-                {
-                    externalApiProblemDetails = null;
-                }
+                if (externalApiProblemDetails?.IsApiProblemDetails != true) externalApiProblemDetails = null;
             }
             catch
             {
@@ -155,21 +139,17 @@ public class ExceptionMiddleware
             };
 
             if (externalApiProblemDetails?.Extensions != null)
-            {
-                foreach (KeyValuePair<string, object> item in externalApiProblemDetails.Extensions)
+                foreach (var item in externalApiProblemDetails.Extensions)
                 {
-                    object value = item.Value is JObject jObject
+                    var value = item.Value is JObject jObject
                         ? jObject.ToObject<Dictionary<string, object>>()
                         : item.Value;
 
                     apiProblemDetails.Extensions.Add(item.Key, value);
                 }
-            }
 
-            if (ex.Headers.TryGetValues("X-Sca-Requirements", out IEnumerable<string> scaRequirements))
-            {
+            if (ex.Headers.TryGetValues("X-Sca-Requirements", out var scaRequirements))
                 context.Response.Headers.Append("X-Sca-Requirements", new StringValues(scaRequirements.ToArray()));
-            }
 
             await SetResponse(context, apiProblemDetails);
         }
@@ -181,7 +161,7 @@ public class ExceptionMiddleware
         {
             ApiProblemDetails apiProblemDetails = new()
             {
-                Status = _statusCodes.TryGetValue(ex.GetType(), out int statusCode)
+                Status = _statusCodes.TryGetValue(ex.GetType(), out var statusCode)
                     ? statusCode
                     : _statusCodes[typeof(Exception)],
                 Type = "ERROR",
@@ -191,16 +171,11 @@ public class ExceptionMiddleware
                 Severity = LogLevel.Error
             };
 
-            foreach (DictionaryEntry item in ex.Data)
-            {
-                apiProblemDetails.Extensions.Add(item.Key.ToString(), item.Value);
-            }
+            foreach (DictionaryEntry item in ex.Data) apiProblemDetails.Extensions.Add(item.Key.ToString(), item.Value);
 
             await SetResponse(context, apiProblemDetails);
         }
     }
-
-  
 }
 
 public class ApiProblemDetails : ProblemDetails

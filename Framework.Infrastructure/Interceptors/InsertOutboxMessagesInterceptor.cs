@@ -17,7 +17,7 @@ public sealed class InsertOutboxMessagesInterceptor : SaveChangesInterceptor
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    private static async  Task<Task> ConvertDomainEventsToOutboxMessages(DbContext context)
+    private static async Task<Task> ConvertDomainEventsToOutboxMessages(DbContext context)
     {
         var outboxMessages = context.ChangeTracker
             .Entries<IAggregateRoot>()

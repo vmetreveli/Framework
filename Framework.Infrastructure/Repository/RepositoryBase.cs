@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Framework.Abstractions.Primitives;
 using Framework.Abstractions.Repository;
 using Framework.Abstractions.Specifications;
+
 // Provides functionality to work with expressions
 // Contains the AggregateRoot base class
 // Contains repository interface definitions
