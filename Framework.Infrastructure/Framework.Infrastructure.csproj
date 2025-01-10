@@ -9,6 +9,7 @@
         <PackageId>FrameworkVM</PackageId>
         <Version>1.0.1</Version>
         <LangVersion>13</LangVersion>
+        <Restore>true</Restore>
     </PropertyGroup>
 
     <ItemGroup>
@@ -34,7 +35,6 @@
     <ItemGroup>
         <Resource Include="../4518763_framework_phoenix_icon.png">
             <Pack>True</Pack>
-            <PackagePath></PackagePath>
             <Link>4518763_framework_phoenix_icon.png</Link>
         </Resource>
     </ItemGroup>
