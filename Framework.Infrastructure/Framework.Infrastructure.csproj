@@ -15,9 +15,9 @@
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
         <PackageReference Include="Humanizer.Core" Version="2.14.1"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
