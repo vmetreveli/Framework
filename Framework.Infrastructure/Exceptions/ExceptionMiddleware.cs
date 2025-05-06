@@ -2,12 +2,10 @@
 using System.Text.Json;
 using Framework.Abstractions.Exceptions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
 using RestEase;
-using Activity = System.Diagnostics.Activity;
 
 namespace Framework.Infrastructure.Exceptions;
 
@@ -101,7 +99,7 @@ public class ExceptionMiddleware
 
             foreach (DictionaryEntry item in ex.Data) apiProblemDetails.Extensions.Add(item.Key.ToString(), item.Value);
 
-            foreach (var item in ex.ResponseHeaders) context.Response.Headers.Append(item.Key, item.Value);
+            foreach (KeyValuePair<string, string> item in ex.ResponseHeaders) context.Response.Headers.Append(item.Key, item.Value);
 
             await SetResponse(context, apiProblemDetails);
         }
@@ -129,7 +127,7 @@ public class ExceptionMiddleware
                 Status = externalApiProblemDetails?.Status ?? _statusCodes[typeof(InflowException)],
                 Type = externalApiProblemDetails?.Type ?? "HTTP_ERROR",
                 Title = externalApiProblemDetails?.Title ??
-                        ex.Message.Replace(ex.RequestUri.ToString(), ex.RequestUri.PathAndQuery),
+                        ex.Message.Replace(ex.RequestUri?.ToString(), ex.RequestUri?.PathAndQuery),
                 Detail = externalApiProblemDetails?.Detail ??
                          ex.Message.Replace(ex.RequestUri.ToString(), ex.RequestUri.PathAndQuery),
                 Instance = context.Request.Path,
@@ -139,9 +137,9 @@ public class ExceptionMiddleware
             };
 
             if (externalApiProblemDetails?.Extensions != null)
-                foreach (var item in externalApiProblemDetails.Extensions)
+                foreach (KeyValuePair<string, object> item in externalApiProblemDetails.Extensions)
                 {
-                    var value = item.Value is JObject jObject
+                    object? value = item.Value is JObject jObject
                         ? jObject.ToObject<Dictionary<string, object>>()
                         : item.Value;
 
@@ -176,14 +174,4 @@ public class ExceptionMiddleware
             await SetResponse(context, apiProblemDetails);
         }
     }
-}
-
-public class ApiProblemDetails : ProblemDetails
-{
-    public bool IsApiProblemDetails { get; } = true;
-    public string? TraceId { get; } = Activity.Current?.TraceId.ToString();
-    public string ExternalEndpoint { get; set; }
-    public Dictionary<string, string[]> ValidationErrors { get; set; } = new();
-    public LogLevel Severity { get; set; } = LogLevel.Error;
-    public new IDictionary<string, object> Extensions { get; set; } = new Dictionary<string, object>();
 }

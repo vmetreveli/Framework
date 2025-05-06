@@ -24,7 +24,7 @@ public abstract class TypeId : IEquatable<TypeId>
     /// </summary>
     /// <param name="other">The <see cref="TypeId" /> to compare with the current <see cref="TypeId" />.</param>
     /// <returns>true if the current <see cref="TypeId" /> is equal to the other <see cref="TypeId" />; otherwise, false.</returns>
-    public bool Equals(TypeId other)
+    public bool Equals(TypeId? other)
     {
         if (ReferenceEquals(null, other)) return false;
         return ReferenceEquals(this, other) || Value.Equals(other.Value);
@@ -40,7 +40,7 @@ public abstract class TypeId : IEquatable<TypeId>
     }
 
     /// <inheritdoc />
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;

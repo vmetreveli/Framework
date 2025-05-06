@@ -9,14 +9,14 @@ public class AggregateId<T> : IEquatable<AggregateId<T>>
 
     public T Value { get; }
 
-    public bool Equals(AggregateId<T> other)
+    public bool Equals(AggregateId<T>? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
         return EqualityComparer<T>.Default.Equals(Value, other.Value);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
