@@ -62,7 +62,7 @@ public abstract class AggregateRoot<TId> : EntityBase<TId>, IAggregateRoot
     /// <summary>
     ///     Gets or sets the unique identifier for the aggregate root.
     /// </summary>
-    public TId Id { get; protected set; }
+    public new TId Id { get; protected set; }
 
     /// <summary>
     ///     Gets the collection of domain events associated with this aggregate root.

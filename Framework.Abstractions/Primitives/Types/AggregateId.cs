@@ -25,7 +25,7 @@ public class AggregateId<T> : IEquatable<AggregateId<T>>
     /// </summary>
     /// <param name="other">The <see cref="AggregateId{T}" /> to compare with the current instance.</param>
     /// <returns>True if the specified <see cref="AggregateId{T}" /> is equal to the current instance; otherwise, false.</returns>
-    public bool Equals(AggregateId<T> other)
+    public bool Equals(AggregateId<T>? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -37,7 +37,7 @@ public class AggregateId<T> : IEquatable<AggregateId<T>>
     /// </summary>
     /// <param name="obj">The object to compare with the current instance.</param>
     /// <returns>True if the specified object is equal to the current instance; otherwise, false.</returns>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
