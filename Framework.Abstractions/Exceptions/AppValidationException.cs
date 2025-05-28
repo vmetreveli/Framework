@@ -6,7 +6,7 @@ namespace Framework.Abstractions.Exceptions;
 
 public class AppValidationException : InflowException
 {
-     public AppValidationException()
+    public AppValidationException()
         : base("VALIDATION_ERROR", "Validation error(s) occurred", null, null, LogLevel.Warning)
     {
         Failures = new Dictionary<string, string[]>();
@@ -42,7 +42,7 @@ public class AppValidationException : InflowException
     public AppValidationException(string propertyName, string errorMessage, LogLevel logLevel)
         : this(errorMessage, logLevel)
     {
-      Failures.Add(propertyName, [errorMessage]);
+        Failures.Add(propertyName, [errorMessage]);
     }
 
     [ExcludeFromCodeCoverage]
@@ -58,17 +58,17 @@ public class AppValidationException : InflowException
         AddFailures(failures);
     }
 
-    public IDictionary<string, string[]> Failures { get;  }
+    public IDictionary<string, string[]> Failures { get; }
 
     private void AddFailures(List<ValidationFailure> failures)
     {
-        IEnumerable<string> propertyNames = failures
+        var propertyNames = failures
             .Select(failure => failure.PropertyName)
             .Distinct();
 
-        foreach (string propertyName in propertyNames)
+        foreach (var propertyName in propertyNames)
         {
-            string[] propertyFailures = failures
+            var propertyFailures = failures
                 .Where(failure => failure.PropertyName == propertyName)
                 .Select(failure => failure.ErrorMessage)
                 .Distinct()
