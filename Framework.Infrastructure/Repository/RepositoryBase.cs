@@ -215,6 +215,30 @@ public abstract class RepositoryBase<TDbContext, TEntity, TId>(TDbContext contex
     }
 
     /// <summary>
+    ///     Asynchronously retrieves a paginated list of entities.
+    /// </summary>
+    /// <param name="pageIndex">The zero-based page index.</param>
+    /// <param name="pageSize">The size of each page.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>A tuple containing the list of entities and total count.</returns>
+    public async Task<(List<TEntity> entity, long TotalCount)> GetPaginatedAsync(int pageIndex, int pageSize, CancellationToken cancellationToken)
+    {
+            var totalCount = context.Set<TEntity>().LongCountAsync(cancellationToken);
+        
+            var entities = await context
+                .Set<TEntity>()
+                .Include(p => p)
+                .AsNoTracking()
+                .OrderBy(p => p.Id)
+                .Skip(pageSize * pageIndex)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+        
+            return (entities, await totalCount);
+    }
+
+
+    /// <summary>
     ///     Applies the given specification to the entity query.
     /// </summary>
     /// <param name="specification">The specification to apply.</param>
