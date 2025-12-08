@@ -20,7 +20,7 @@ public class AutoMapperProfile : Profile
             foreach (var type in types)
             {
                 var methodInfo = type.GetMethod(nameof(IMap.Mapping));
-                methodInfo?.Invoke(Activator.CreateInstance(type), new object[] { this });
+                methodInfo?.Invoke(Activator.CreateInstance(type), [this]);
             }
         }
     }
