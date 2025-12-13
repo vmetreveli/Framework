@@ -74,3 +74,29 @@ Core Components
     UnitOfWork
     ValueObject
     Exception handling mechanisms
+
+NuGet packaging
+
+To pack the `Framework.Infrastructure` project locally and validate the created package:
+
+```bash
+# from repo root
+./scripts/pack.sh
+# inspect created nupkg/snupkg files
+ls -la artifacts
+```
+
+To push packages to nuget.org (requires NUGET_API_KEY env var):
+
+```bash
+export NUGET_API_KEY="<your-nuget-api-key>"
+./scripts/push.sh
+```
+
+Install the package in another project:
+
+```bash
+dotnet add package FrameworkVM --version 1.0.1
+```
+
+CI: a GitHub Actions workflow at `.github/workflows/publish.yml` will pack and publish packages when you push a tag like `v1.0.1`. Add the `NUGET_API_KEY` as a repository secret named `NUGET_API_KEY`.
