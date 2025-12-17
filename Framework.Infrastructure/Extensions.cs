@@ -6,6 +6,7 @@ using Framework.Infrastructure.Context;
 using Framework.Infrastructure.Exceptions;
 using Framework.Infrastructure.Jobs;
 using Framework.Infrastructure.Repository;
+using Framework.Infrastructure.Seed;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -53,6 +54,31 @@ public static class Extensions
                 Assembly.GetExecutingAssembly());
 
         return services;
+    }
+    public static IApplicationBuilder UseMigration<TContext>(this IApplicationBuilder app)
+        where TContext : DbContext
+    {
+        MigrateDatabaseAsync<TContext>(app.ApplicationServices).GetAwaiter().GetResult();
+
+        SeedDataAsync(app.ApplicationServices).GetAwaiter().GetResult();
+
+        return app;
+    }
+
+    private static async Task MigrateDatabaseAsync<TContext>(IServiceProvider serviceProvider)
+        where TContext : DbContext
+    {
+        using var scope = serviceProvider.CreateScope();
+
+        var context = scope.ServiceProvider.GetRequiredService<TContext>();
+        await context.Database.MigrateAsync();
+    }
+
+    private static async Task SeedDataAsync(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var seeders = scope.ServiceProvider.GetServices<IDataSeeder>();
+        foreach (var seeder in seeders) await seeder.SeedAllAsync();
     }
 
     /// <summary>
