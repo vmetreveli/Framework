@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
-    <!-- Default version; CI will override this via -p:PackageVersion=... -->
-    <Version>0.0.0-local</Version>
+    <!-- MinVer will automatically version the assembly and the package -->
+    <MinVerTagPrefix>v</MinVerTagPrefix>
 
     <!-- Common package metadata - edit as appropriate -->
     <Authors>Vakhushti Metreveli</Authors>
@@ -15,7 +15,8 @@
     <!-- Build / pack defaults -->
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageOutputPath>$(SolutionDir).nupkgs</PackageOutputPath>
-    <IncludeSymbols>false</IncludeSymbols>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <IncludeSource>false</IncludeSource>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
@@ -32,5 +33,11 @@
   <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)README.md')">
     <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="" />
   </ItemGroup>
-</Project>
 
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="5.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

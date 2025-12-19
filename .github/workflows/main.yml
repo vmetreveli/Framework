@@ -21,7 +21,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '8.0.x'
 
       - name: Create artifacts directory
         run: mkdir -p artifacts
@@ -45,11 +45,8 @@ jobs:
       # -------------------------
       # Pack BOTH projects
       # -------------------------
-      - name: Pack Framework.Abstractions
-        run: dotnet pack Framework.Abstractions/Framework.Abstractions.csproj --configuration Release --no-build -p:PackageVersion=${{ steps.version.outputs.VERSION }} --output artifacts
-
-      - name: Pack Framework.Infrastructure
-        run: dotnet pack Framework.Infrastructure/Framework.Infrastructure.csproj --configuration Release --no-build -p:PackageVersion=${{ steps.version.outputs.VERSION }} --output artifacts
+      - name: Pack Meadow_Framework
+        run: dotnet pack Meadow_Framework/Meadow_Framework/Meadow_Framework.csproj --configuration Release --no-build -p:PackageVersion=${{ steps.version.outputs.VERSION }} --output artifacts
 
       # -------------------------
       # Publish to GitHub Packages

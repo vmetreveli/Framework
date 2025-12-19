@@ -5,14 +5,16 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <!-- Package metadata for NuGet packaging -->
-        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>Meadow_Framework</PackageId>
-        <Version>1.0.0</Version>
         <Authors>Meadow</Authors>
         <Company>Meadow</Company>
         <Description>Common framework abstractions and infrastructure for Meadow projects.</Description>
         <PackageTags>framework;meadow;library</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <LangVersion>13</LangVersion>
+        <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
+        <Version />
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
