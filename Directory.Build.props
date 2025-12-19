@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <!-- Default version; CI will override this via -p:PackageVersion=... -->
+    <Version>0.0.0-local</Version>
+
+    <!-- Common package metadata - edit as appropriate -->
+    <Authors>Vakhushti Metreveli</Authors>
+    <Company>Meadow</Company>
+    <Description>Core Meadow framework libraries (abstractions and infrastructure).</Description>
+    <PackageTags>meadow;framework;abstractions;infrastructure;ddd;messaging;outbox</PackageTags>
+    <RepositoryUrl>https://github.com/vmetreveli/Meadow_Framework.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- Build / pack defaults -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageOutputPath>$(SolutionDir).nupkgs</PackageOutputPath>
+    <IncludeSymbols>false</IncludeSymbols>
+    <IncludeSource>false</IncludeSource>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- Prevent packing of executable apps by default -->
+    <PackAsTool>false</PackAsTool>
+
+    <!-- Ensure every package references the repository README as the package readme -->
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <!-- Include the repo README into every package root (only if file exists next to this Directory.Build.props) -->
+  <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)README.md')">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+</Project>
+
