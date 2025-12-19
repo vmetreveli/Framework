@@ -1,29 +1,53 @@
+name: Build & Publish NuGet
+
 on:
   push:
     branches:
-    - master
+      - master
+
+permissions:
+  contents: read
+  packages: write   # ⬅️ REQUIRED for GitHub Packages
+
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.0.x'
-    - name: Create artifacts directory
-      run: mkdir -p artifacts
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --configuration Release --no-build
-    - name: Pack
-      run: dotnet pack Framework.Infrastructure/Framework.Infrastructure.csproj --configuration Release --no-build --output .
-    - name: Push to GitHub Packages
-      run: dotnet nuget push Meadow.Framework.Infrastructure.*.nupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
-    - name: Push symbols to GitHub Packages
-      run: dotnet nuget push Meadow.Framework.Infrastructure.*.snupkg --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+
+      - name: Pack
+        run: dotnet pack Framework.Infrastructure/Framework.Infrastructure.csproj \
+          --configuration Release \
+          --no-build \
+          --output ./artifacts
+
+      - name: Push NuGet package to GitHub Packages
+        run: |
+          dotnet nuget push "./artifacts/Meadow.Framework.Infrastructure.*.nupkg" \
+            --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --skip-duplicate
+
+      - name: Push symbols package to GitHub Packages
+        run: |
+          dotnet nuget push "./artifacts/Meadow.Framework.Infrastructure.*.snupkg" \
+            --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --skip-duplicate
