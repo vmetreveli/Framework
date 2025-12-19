@@ -4,6 +4,15 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <!-- Package metadata for NuGet packaging -->
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <PackageId>Meadow.Framework</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Meadow</Authors>
+        <Company>Meadow</Company>
+        <Description>Common framework abstractions and infrastructure for Meadow projects.</Description>
+        <PackageTags>framework;meadow;library</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
@@ -17,11 +26,6 @@
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.11" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
         <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1" />
-
-    </ItemGroup>
-
-
-    <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1"/>
         <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="7.0.2"/>
         <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />

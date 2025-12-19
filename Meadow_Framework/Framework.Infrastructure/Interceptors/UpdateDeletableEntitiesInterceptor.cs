@@ -1,60 +1,64 @@
 using Meadow_Framework.Framework.Abstractions.Primitives;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Meadow_Framework.Framework.Infrastructure.Interceptors;
 
 /// <summary>
-///     Interceptor for updating entities that implement <see cref="IDeletableEntity" /> before saving changes to the
-///     database.
-///     This interceptor sets audit fields for soft deletion instead of physically deleting records.
+/// Interceptor for automatically handling soft deletion for entities implementing <see cref="IDeletableEntity"/>.
 /// </summary>
+/// <remarks>
+/// This interceptor intercepts calls to <see cref="DbContext.SaveChangesAsync(CancellationToken)"/>
+/// and modifies the state of deleted entities to perform a soft delete instead of a hard delete.
+/// </remarks>
 public sealed class UpdateDeletableEntitiesInterceptor : SaveChangesInterceptor
 {
     /// <summary>
-    ///     Called asynchronously before changes are saved to the database.
-    ///     Updates the deletable entities to perform a soft delete by marking them as deleted.
+    /// Asynchronously intercepts the saving of changes to the database.
     /// </summary>
-    /// <param name="eventData">The event data associated with the database context.</param>
-    /// <param name="result">The current result of the interception.</param>
-    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
-    /// <returns>A <see cref="ValueTask{InterceptionResult{T}}" /> representing the asynchronous operation.</returns>
+    /// <param name="eventData">The event data for the save changes operation.</param>
+    /// <param name="result">The current interception result.</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    /// A <see cref="ValueTask{InterceptionResult}"/> representing the asynchronous operation, with the original or modified result.
+    /// </returns>
+    /// <remarks>
+    /// This method identifies entities marked for deletion that implement <see cref="IDeletableEntity"/>
+    /// and updates their state to reflect a soft delete.
+    /// </remarks>
     public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
         InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
-        // If the context is not null, update the deletable entities
         if (eventData.Context is not null)
+        {
             UpdateDeletableEntities(eventData.Context);
+        }
 
-        // Call the base method to continue the interception chain
         return await base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
     /// <summary>
-    ///     Updates entities that implement <see cref="IDeletableEntity" /> which are marked for deletion.
-    ///     Performs a soft delete by setting the <see cref="IDeletableEntity.DeletedOn" /> and
-    ///     <see cref="IDeletableEntity.IsDeleted" /> properties.
+    /// Updates the state of deletable entities within the provided <see cref="DbContext"/>.
     /// </summary>
-    /// <param name="context">The <see cref="DbContext" /> instance to update.</param>
+    /// <param name="context">The database context containing the entities.</param>
+    /// <remarks>
+    /// This method filters for entities that implement <see cref="IDeletableEntity"/> and are in the <see cref="EntityState.Deleted"/> state.
+    /// It then changes their state to <see cref="EntityState.Modified"/> and sets the <see cref="IDeletableEntity.DeletedOn"/>
+    /// and <see cref="IDeletableEntity.IsDeleted"/> properties to perform a soft delete.
+    /// </remarks>
     private static void UpdateDeletableEntities(DbContext context)
     {
         var utcNow = DateTime.UtcNow;
 
-        // Retrieve entries that are marked as deleted
         var entries = context.ChangeTracker
             .Entries<IDeletableEntity>()
             .Where(e => e.State == EntityState.Deleted);
 
         foreach (var entityEntry in entries)
         {
-            // Change the entity state from Deleted to Modified to perform a soft delete
+            entityEntry.Property(a => a.DeletedOn).CurrentValue = utcNow;
+            entityEntry.Property(a => a.IsDeleted).CurrentValue = true;
             entityEntry.State = EntityState.Modified;
-
-            // Set the DeletedOn property to the current UTC time
-            entityEntry.Property(a => a.DeletedOn)
-                .CurrentValue = utcNow;
-
-            // Mark the entity as deleted
-            entityEntry.Property(a => a.IsDeleted)
-                .CurrentValue = true;
         }
     }
 }
