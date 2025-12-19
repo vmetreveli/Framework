@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a993fe70-423a-4e9c-ad05-571cf5d62ad3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Framework/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Framework/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Framework.Abstractions/Framework.Abstractions.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Framework.Abstractions/Framework.Abstractions.csproj" afterDir="false" />
-    </list>
+    <list default="true" id="a993fe70-423a-4e9c-ad05-571cf5d62ad3" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -144,7 +140,7 @@
       <workItem from="1766138881612" duration="30000" />
       <workItem from="1766138929353" duration="38000" />
       <workItem from="1766138979579" duration="137000" />
-      <workItem from="1766140144568" duration="7302000" />
+      <workItem from="1766140144568" duration="7701000" />
     </task>
     <task id="LOCAL-00001" summary="Update project to target .NET 10.0 and upgrade dependencies">
       <option name="closed" value="true" />
@@ -234,7 +230,15 @@
       <option name="project" value="LOCAL" />
       <updated>1766146107103</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Update project files to reflect new package IDs, descriptions, and repository URLs; add icon to project files">
+      <option name="closed" value="true" />
+      <created>1766148323244</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1766148323244</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -266,7 +270,8 @@
     <MESSAGE value="Update workflow files to use renamed solution file Meadow_Framework.sln" />
     <MESSAGE value="Update project files to reflect new package IDs and repository URLs" />
     <MESSAGE value="Add artifacts directory creation and configure RunManager for pack.sh script" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add artifacts directory creation and configure RunManager for pack.sh script" />
+    <MESSAGE value="Update project files to reflect new package IDs, descriptions, and repository URLs; add icon to project files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update project files to reflect new package IDs, descriptions, and repository URLs; add icon to project files" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
