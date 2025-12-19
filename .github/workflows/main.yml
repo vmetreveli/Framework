@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  packages: write   # ⬅️ REQUIRED for GitHub Packages
+  packages: write   # for GitHub Packages
 
 jobs:
   build:
@@ -15,15 +15,17 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
 
-      - name: Restore dependencies
+      # Required because you reference ./artifacts
+      - name: Create artifacts directory
+        run: mkdir -p artifacts
+
+      - name: Restore
         run: dotnet restore
 
       - name: Build
@@ -36,18 +38,31 @@ jobs:
         run: dotnet pack Framework.Infrastructure/Framework.Infrastructure.csproj \
           --configuration Release \
           --no-build \
-          --output ./artifacts
+          --output artifacts
 
-      - name: Push NuGet package to GitHub Packages
+      # -------------------------
+      # Publish to GitHub Packages
+      # -------------------------
+      - name: Publish to GitHub Packages
         run: |
-          dotnet nuget push "./artifacts/Meadow.Framework.Infrastructure.*.nupkg" \
+          dotnet nuget push "artifacts/Meadow.Framework.Infrastructure.*.nupkg" \
             --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
             --api-key ${{ secrets.GITHUB_TOKEN }} \
             --skip-duplicate
 
-      - name: Push symbols package to GitHub Packages
+      - name: Publish symbols to GitHub Packages
         run: |
-          dotnet nuget push "./artifacts/Meadow.Framework.Infrastructure.*.snupkg" \
+          dotnet nuget push "artifacts/Meadow.Framework.Infrastructure.*.snupkg" \
             --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
             --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --skip-duplicate
+
+      # -------------------------
+      # Publish to NuGet.org
+      # -------------------------
+      - name: Publish to NuGet.org
+        run: |
+          dotnet nuget push "artifacts/Meadow.Framework.Infrastructure.*.nupkg" \
+            --source https://api.nuget.org/v3/index.json \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
             --skip-duplicate
