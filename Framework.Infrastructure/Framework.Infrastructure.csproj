@@ -3,21 +3,22 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Title>Framework</Title>
-        <Authors>Vakhushti Metreveli</Authors>
-        <Description>Framework For DDD</Description>
+
         <PackageId>Meadow.Framework.Infrastructure</PackageId>
-        <Version>1.0.1</Version>
-        <LangVersion>default</LangVersion>
-        <Restore>true</Restore>
-        <RepositoryUrl>https://github.com/vmetreveli/Meadow_Framework/</RepositoryUrl>
-        <PackageTags>Meadow framework infrastructure ddd messaging outbox</PackageTags>
+        <Authors>Vakhushti Metreveli</Authors>
+        <Description>Infrastructure layer for the Meadow Framework.</Description>
+        <PackageTags>meadow framework infrastructure ddd messaging outbox</PackageTags>
+        <RepositoryUrl>https://github.com/vmetreveli/Meadow_Framework</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
+
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Include="4518763_framework_phoenix_icon.png" Pack="true" PackagePath="" />
+    </ItemGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
         <PackageReference Include="Humanizer.Core" Version="2.14.1"/>

@@ -3,21 +3,21 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>default</LangVersion>
 
-        <!-- Package metadata for NuGet publishing -->
         <PackageId>Meadow.Framework.Abstractions</PackageId>
-        <Version>1.0.0</Version>
         <Authors>Vakhushti Metreveli</Authors>
-        <Description>Abstractions and contracts (commands, queries, events, primitives) for the Phoenix Framework.</Description>
-        <PackageTags>phoenix framework abstractions ddd messaging outbox</PackageTags>
-        <RepositoryUrl>https://github.com/vmetreveli/Meadow_Framework/</RepositoryUrl>
+        <Description>
+            Abstractions and contracts (commands, queries, events, primitives) for the Meadow Framework.
+        </Description>
+        <PackageTags>meadow framework abstractions ddd messaging outbox</PackageTags>
+        <RepositoryUrl>https://github.com/vmetreveli/Meadow_Framework</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Include="4518763_framework_phoenix_icon.png" Pack="true" PackagePath="" />
+    </ItemGroup>
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1"/>
         <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="7.0.2"/>

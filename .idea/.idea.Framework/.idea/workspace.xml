@@ -6,21 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="a993fe70-423a-4e9c-ad05-571cf5d62ad3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.github/workflows/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/nuget-publish.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/publish-nuget.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/publish.yml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Framework/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Framework/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Framework.Abstractions/Framework.Abstractions.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Framework.Abstractions/Framework.Abstractions.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Framework.Infrastructure.Tests/Dispatchers/DispatcherTests.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Framework.Infrastructure.Tests/Queries/QueryDispatcherTests.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Framework.Infrastructure/Framework.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Framework.Infrastructure/Framework.Infrastructure.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Meadow_Framework.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Meadow_Framework.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/artifacts/Phoenix.Framework.Abstractions.1.0.0.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/artifacts/Phoenix.Framework.Abstractions.1.0.0.snupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/artifacts/Phoenix.Framework.Infrastructure.1.0.1.nupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/artifacts/Phoenix.Framework.Infrastructure.1.0.1.snupkg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/pack.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/push.sh" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,6 +73,7 @@
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;SHELLCHECK.PATH&quot;: &quot;/Users/vakhushtimetreveli/Library/Application Support/JetBrains/Rider2025.3/plugins/Shell Script/shellcheck&quot;,
     &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;false&quot;,
+    &quot;Shell Script.pack.sh.executor&quot;: &quot;Run&quot;,
     &quot;Shell Script.push.sh.executor&quot;: &quot;Run&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -156,7 +144,7 @@
       <workItem from="1766138881612" duration="30000" />
       <workItem from="1766138929353" duration="38000" />
       <workItem from="1766138979579" duration="137000" />
-      <workItem from="1766140144568" duration="5751000" />
+      <workItem from="1766140144568" duration="7302000" />
     </task>
     <task id="LOCAL-00001" summary="Update project to target .NET 10.0 and upgrade dependencies">
       <option name="closed" value="true" />
@@ -230,7 +218,23 @@
       <option name="project" value="LOCAL" />
       <updated>1766144164519</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Update project files to reflect new package IDs and repository URLs">
+      <option name="closed" value="true" />
+      <created>1766145914194</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1766145914194</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Add artifacts directory creation and configure RunManager for pack.sh script">
+      <option name="closed" value="true" />
+      <created>1766146107103</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1766146107103</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -260,7 +264,9 @@
     <MESSAGE value="Rename solution file from Framework.sln to Meadow_Framework.sln" />
     <MESSAGE value="Refactor project file to include icon as None and update NuGet publish workflow" />
     <MESSAGE value="Update workflow files to use renamed solution file Meadow_Framework.sln" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update workflow files to use renamed solution file Meadow_Framework.sln" />
+    <MESSAGE value="Update project files to reflect new package IDs and repository URLs" />
+    <MESSAGE value="Add artifacts directory creation and configure RunManager for pack.sh script" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add artifacts directory creation and configure RunManager for pack.sh script" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
