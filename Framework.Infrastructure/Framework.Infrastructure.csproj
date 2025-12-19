@@ -37,15 +37,12 @@
         <ProjectReference Include="..\Framework.Abstractions\Framework.Abstractions.csproj"/>
     </ItemGroup>
 
-
-    <ItemGroup>
-        <Resource Include="../4518763_framework_phoenix_icon.png">
-            <Pack>True</Pack>
-            <Link>4518763_framework_phoenix_icon.png</Link>
-        </Resource>
-    </ItemGroup>
-
     <ItemGroup>
         <Folder Include="Migrations\"/>
+    </ItemGroup>
+
+    <!-- Ensure the icon is included in the nupkg: use the repo-root copy with Pack="True" -->
+    <ItemGroup>
+        <None Include="..\4518763_framework_phoenix_icon.png" Pack="True" PackagePath="" />
     </ItemGroup>
 </Project>

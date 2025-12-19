@@ -1,0 +1,47 @@
+name: Publish NuGet packages
+
+on:
+  workflow_dispatch: {}
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore solution
+        run: dotnet restore Framework.sln
+
+      - name: Pack Infrastructure
+        run: |
+          dotnet pack ./Framework.Infrastructure/Framework.Infrastructure.csproj -c Release -o ./artifacts /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
+
+      - name: Pack Abstractions
+        run: |
+          dotnet pack ./Framework.Abstractions/Framework.Abstractions.csproj -c Release -o ./artifacts /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg
+
+      - name: Publish packages to NuGet.org
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${NUGET_API_KEY-}" ]]; then
+            echo "NUGET_API_KEY is not set in Secrets. Add it to repository or organization secrets." >&2
+            exit 1
+          fi
+          shopt -s nullglob
+          for pkg in ./artifacts/*.nupkg ./artifacts/*.snupkg; do
+            [ -f "$pkg" ] || continue
+            echo "Pushing $pkg"
+            dotnet nuget push "$pkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          done
+

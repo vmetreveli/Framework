@@ -43,9 +43,6 @@
 
     <!-- Include project icon so it can be used as the PackageIcon -->
     <ItemGroup>
-        <Resource Include="../4518763_framework_phoenix_icon.png">
-            <Pack>True</Pack>
-            <Link>4518763_framework_phoenix_icon.png</Link>
-        </Resource>
+        <None Include="..\4518763_framework_phoenix_icon.png" Pack="True" PackagePath="" />
     </ItemGroup>
 </Project>
