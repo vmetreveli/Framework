@@ -6,12 +6,12 @@
         <Title>Framework</Title>
         <Authors>Vakhushti Metreveli</Authors>
         <Description>Framework For DDD</Description>
-        <PackageId>Phoenix.Framework.Infrastructure</PackageId>
+        <PackageId>Meadow.Framework.Infrastructure</PackageId>
         <Version>1.0.1</Version>
         <LangVersion>default</LangVersion>
         <Restore>true</Restore>
-        <RepositoryUrl>https://github.com/your-org/Framework</RepositoryUrl>
-        <PackageTags>phoenix framework infrastructure ddd messaging outbox</PackageTags>
+        <RepositoryUrl>https://github.com/vmetreveli/Meadow_Framework/</RepositoryUrl>
+        <PackageTags>Meadow framework infrastructure ddd messaging outbox</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
         <IncludeSymbols>true</IncludeSymbols>

@@ -6,13 +6,13 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestProjectMapping/=2DCA7BB2_002DDA7F_002D4C0A_002DA74B_002D5111436D1D9A/@EntryIndexedValue">Framework.Infrastructure.Tests</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestTemplateMapping/=xUnit/@EntryIndexedValue">33ff99d8-b1ad-4ed5-a4fd-376b97c2c841</s:String>
 	<s:Boolean x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/ShowAdvancedOptions/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=02441649_002D89ab_002D4fd8_002D8e30_002D063252f3e14e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateOutboxMessage_ShouldAddNewMessage_WhenMessageDoesNotExist" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::5AF05563-C50F-4A39-B35C-8B5893459E20::net8.0::Framework.Infrastructure.Tests.Repository.OutboxRepositoryTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=02441649_002D89ab_002D4fd8_002D8e30_002D063252f3e14e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateOutboxMessage_ShouldAddNewMessage_WhenMessageDoesNotExist" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::5AF05563-C50F-4A39-B35C-8B5893459E20::net8.0::Framework.Infrastructure.Tests.Repository.OutboxRepositoryTest&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=474a7c7b_002Dcd6c_002D45e4_002D88e3_002Dc767e062455c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="OutboxRepositoryTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::5AF05563-C50F-4A39-B35C-8B5893459E20::net8.0::Framework.Infrastructure.Tests.Repository.OutboxRepositoryTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=474a7c7b_002Dcd6c_002D45e4_002D88e3_002Dc767e062455c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="OutboxRepositoryTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::5AF05563-C50F-4A39-B35C-8B5893459E20::net8.0::Framework.Infrastructure.Tests.Repository.OutboxRepositoryTest&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
