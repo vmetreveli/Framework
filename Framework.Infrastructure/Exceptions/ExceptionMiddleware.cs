@@ -109,7 +109,7 @@ public class ExceptionMiddleware
     {
         if (!context.Response.HasStarted)
         {
-            ApiProblemDetails externalApiProblemDetails = null;
+            ApiProblemDetails? externalApiProblemDetails = null;
 
             try
             {

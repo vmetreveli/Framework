@@ -44,7 +44,7 @@ public class InflowException : Exception
     {
     }
 
-    public InflowException(string code, string title, string message, Exception innerException, LogLevel logLevel)
+    public InflowException(string? code, string? title, string? message, Exception innerException, LogLevel logLevel)
         : base(message ?? title ?? code, innerException)
     {
         Code = code;

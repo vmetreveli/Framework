@@ -134,4 +134,16 @@ public interface IRepositoryBase<TEntity, TId>
     /// </summary>
     /// <param name="entities">The entities to remove.</param>
     void RemoveRange(IEnumerable<TEntity> entities);
+
+    /// <summary>
+    ///     Asynchronously retrieves a paginated list of entities.
+    /// </summary>
+    /// <param name="pageIndex">The zero-based index of the page to retrieve.</param>
+    /// <param name="pageSize">The maximum number of entities to return per page.</param>
+    /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
+    /// <returns>A task representing the asynchronous operation, containing a tuple with the list of entities and total count.</returns>
+    public Task<(List<TEntity> entity, long TotalCount)> GetPaginatedAsync(
+        int pageIndex,
+        int pageSize,
+        CancellationToken cancellationToken);
 }
