@@ -4,6 +4,18 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>default</LangVersion>
+
+        <!-- Package metadata for NuGet publishing -->
+        <PackageId>Phoenix.Framework.Abstractions</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Vakhushti Metreveli</Authors>
+        <Description>Abstractions and contracts (commands, queries, events, primitives) for the Phoenix Framework.</Description>
+        <PackageTags>phoenix framework abstractions ddd messaging outbox</PackageTags>
+        <RepositoryUrl>https://github.com/your-org/Framework</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,5 +39,13 @@
         <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1"/>
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.4" />
         <PackageReference Include="RestEase" Version="1.6.4"/>
+    </ItemGroup>
+
+    <!-- Include project icon so it can be used as the PackageIcon -->
+    <ItemGroup>
+        <Resource Include="../4518763_framework_phoenix_icon.png">
+            <Pack>True</Pack>
+            <Link>4518763_framework_phoenix_icon.png</Link>
+        </Resource>
     </ItemGroup>
 </Project>
