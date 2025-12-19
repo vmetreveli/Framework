@@ -18,10 +18,10 @@ jobs:
           dotnet-version: '9.x'
 
       - name: Restore
-        run: dotnet restore Framework.sln
+        run: dotnet restore Meadow_Framework.sln
 
       - name: Build
-        run: dotnet build Framework.sln -c Release --no-restore
+        run: dotnet build Meadow_Framework.sln -c Release --no-restore
 
       - name: Pack
         run: |

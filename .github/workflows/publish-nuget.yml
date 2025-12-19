@@ -19,7 +19,7 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore solution
-        run: dotnet restore Framework.sln
+        run: dotnet restore Meadow_Framework.sln
 
       - name: Pack Infrastructure
         run: |
