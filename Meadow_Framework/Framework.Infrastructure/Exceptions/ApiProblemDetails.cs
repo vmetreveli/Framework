@@ -4,6 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Meadow_Framework.Framework.Infrastructure.Exceptions;
 
+/// <summary>
+///
+/// </summary>
 public class ApiProblemDetails : ProblemDetails
 {
     public bool IsApiProblemDetails { get; } = true;
