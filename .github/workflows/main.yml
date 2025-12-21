@@ -156,7 +156,7 @@ jobs:
           echo "[CI/CD] Publishing to GitHub Packages..."
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
             --source ${{ env.GITHUB_NUGET_SOURCE }} \
-            --api-key ${{ secrets.GITHUB_PACKAGE_TOKEN }} \
+            --api-key ${{ secrets.NUGET_PACKAGE_TOKEN }} \
             --skip-duplicate
 
       # ----------------------------
