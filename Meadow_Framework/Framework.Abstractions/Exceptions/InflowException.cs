@@ -4,6 +4,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Meadow_Framework.Framework.Abstractions.Exceptions;
 
+/// <summary>
+///     Represents the base exception class for all custom exceptions in the Inflow framework.
+///     Provides flexible constructors for various exception scenarios with support for error codes, titles, messages, and log levels.
+/// </summary>
 public class InflowException : Exception
 {
     public InflowException(string title)
@@ -178,13 +182,25 @@ public class InflowException : Exception
     {
     }
 
+    /// <summary>
+    ///     Gets or sets the error code associated with the exception.
+    /// </summary>
     public string Code { get; set; }
 
+    /// <summary>
+    ///     Gets or sets the title or summary of the exception.
+    /// </summary>
     [SuppressMessage("Security", "SensitiveDataAnalyzer:Property contains sensitive data",
         Justification = "Not needed")]
     public string Title { get; set; }
 
+    /// <summary>
+    ///     Gets or sets the log level for this exception.
+    /// </summary>
     public LogLevel LogLevel { get; set; }
 
+    /// <summary>
+    ///     Gets or sets the custom response headers to be included in the HTTP response.
+    /// </summary>
     public Dictionary<string, string> ResponseHeaders { get; set; }
 }

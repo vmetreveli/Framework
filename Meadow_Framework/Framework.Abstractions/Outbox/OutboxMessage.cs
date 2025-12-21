@@ -65,6 +65,9 @@ public sealed class OutboxMessage : AggregateRoot<Guid>
     /// </summary>
     public DateTime ModifiedDate { get; set; }
 
+    /// <summary>
+    ///     Gets or sets the content of the outbox message.
+    /// </summary>
     public string Content { get; set; }
 
     /// <summary>

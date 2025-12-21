@@ -3,6 +3,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Meadow_Framework.Framework.Abstractions.Exceptions;
 
+/// <summary>
+///     Represents an HTTP-related exception in the application.
+///     Extends <see cref="InflowException" /> with HTTP-specific functionality.
+/// </summary>
 public class HttpException : InflowException
 {
     public HttpException(string title) : base(title)
@@ -133,5 +137,8 @@ public class HttpException : InflowException
     {
     }
 
+    /// <summary>
+    ///     Gets or sets the endpoint URL that caused the exception.
+    /// </summary>
     public string Endpoint { get; set; }
 }

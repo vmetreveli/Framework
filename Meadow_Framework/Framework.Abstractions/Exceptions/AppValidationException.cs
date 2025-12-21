@@ -4,6 +4,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Meadow_Framework.Framework.Abstractions.Exceptions;
 
+/// <summary>
+///     Represents a validation exception that occurs when one or more validation rules are violated.
+///     Contains a dictionary of validation failures grouped by property names.
+/// </summary>
 public class AppValidationException : InflowException
 {
      public AppValidationException()
@@ -58,8 +62,16 @@ public class AppValidationException : InflowException
         AddFailures(failures);
     }
 
+    /// <summary>
+    ///     Gets the dictionary of validation failures, where the key is the property name
+    ///     and the value is an array of error messages for that property.
+    /// </summary>
     public IDictionary<string, string[]> Failures { get;  }
 
+    /// <summary>
+    ///     Adds validation failures to the Failures dictionary, grouping them by property name.
+    /// </summary>
+    /// <param name="failures">The list of validation failures to add.</param>
     private void AddFailures(List<ValidationFailure> failures)
     {
         IEnumerable<string> propertyNames = failures

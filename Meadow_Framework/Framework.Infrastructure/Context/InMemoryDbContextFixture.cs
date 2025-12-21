@@ -1,5 +1,8 @@
 namespace Meadow_Framework.Framework.Infrastructure.Context;
 
+/// <summary>
+///
+/// </summary>
 public class InMemoryDbContextFixture : IDisposable
 {
     public InMemoryDbContextFixture()

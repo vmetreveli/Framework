@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Meadow_Framework.Framework.Abstractions.Exceptions;
 
+/// <summary>
+///     Represents an exception thrown when attempting to use an outdated version of an entity or resource.
+/// </summary>
 public class OutdatedVersionException : InflowException
 {
     public OutdatedVersionException(string title) : base(title)
