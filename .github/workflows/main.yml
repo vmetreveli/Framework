@@ -12,7 +12,7 @@ env:
   PROJECT_PATH: Meadow_Framework/Meadow_Framework.csproj
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
   NUGET_ORG_SOURCE: https://api.nuget.org/v3/index.json
-  GITHUB_NUGET_SOURCE: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+  GITHUB_NUGET_SOURCE: https://nuget.pkg.github.com/vmetreveli/index.json
 
 jobs:
   release:
