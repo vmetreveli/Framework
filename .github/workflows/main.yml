@@ -17,7 +17,7 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     permissions:
       contents: write
@@ -33,47 +33,55 @@ jobs:
           fetch-depth: 0
 
       # ----------------------------
-      # Tag safety check
+      # Logging function
       # ----------------------------
-      - name: Verify tag is on master
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Log start
         run: |
-          git fetch origin master
-          git branch --contains HEAD | grep master
+          log() { echo "[CI/CD] $1"; }
+          log "Workflow started on ref: $GITHUB_REF"
 
       # ----------------------------
-      # Determine VERSION
+      # Setup Node for semantic-release
       # ----------------------------
-      - name: Determine VERSION
-        id: version
-        run: |
-          set -e
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            VERSION="${GITHUB_REF#refs/tags/v}"
-          else
-            # Get latest tag or default to 0.0.0
-            LATEST_TAG=$(git tag --sort=-creatordate | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n1 || echo "v0.0.0")
-            VERSION="${LATEST_TAG#v}"
-            # Increment patch
-            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
-            PATCH=$((PATCH + 1))
-            VERSION="$MAJOR.$MINOR.$PATCH"
-          fi
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "VERSION=$VERSION"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
       # ----------------------------
-      # Create Git tag (for non-tag builds)
+      # Install semantic-release
       # ----------------------------
-      - name: Create Git tag
-        if: "!startsWith(github.ref, 'refs/tags/')"
+      - name: Install semantic-release
+        run: |
+          npm install --no-save \
+            semantic-release \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator \
+            @semantic-release/github \
+            @semantic-release/exec
+
+      # ----------------------------
+      # Run semantic-release
+      # ----------------------------
+      - name: Semantic release
+        id: semantic
         env:
-          VERSION: ${{ env.VERSION }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v$VERSION" -m "Release v$VERSION"
-          git push origin "v$VERSION"
+          npx semantic-release \
+            --branches master \
+            --ci
+          echo "[CI/CD] Semantic release completed."
+
+      # ----------------------------
+      # Set VERSION from semantic-release
+      # ----------------------------
+      - name: Set VERSION
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: |
+          VERSION=${{ steps.semantic.outputs.new_release_version }}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "[CI/CD] Version determined by semantic-release: $VERSION"
 
       # ----------------------------
       # Setup .NET
@@ -87,18 +95,21 @@ jobs:
       # Build & Test
       # ----------------------------
       - name: Restore
-        run: dotnet restore ${{ env.PROJECT_PATH }}
+        run: |
+          echo "[CI/CD] Restoring dependencies..."
+          dotnet restore ${{ env.PROJECT_PATH }}
 
       - name: Build
         run: |
+          echo "[CI/CD] Building project..."
           dotnet build ${{ env.PROJECT_PATH }} \
             --configuration Release \
             --no-restore \
             /p:Version=${{ env.VERSION }}
 
       - name: Test
-        if: startsWith(github.ref, 'refs/tags/')
         run: |
+          echo "[CI/CD] Running tests..."
           dotnet test ${{ env.PROJECT_PATH }} \
             --configuration Release \
             --no-build \
@@ -109,19 +120,23 @@ jobs:
       # ----------------------------
       - name: Pack
         run: |
+          echo "[CI/CD] Packing project..."
           mkdir -p ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
           dotnet pack ${{ env.PROJECT_PATH }} \
             --configuration Release \
             --no-build \
             --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} \
             /p:Version=${{ env.VERSION }}
+          echo "[CI/CD] Pack completed. Files in ${{ env.PACKAGE_OUTPUT_DIRECTORY }}:"
+          ls -la ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
       # ----------------------------
       # Publish to NuGet.org
       # ----------------------------
       - name: Publish to NuGet.org
-        if: startsWith(github.ref, 'refs/tags/')
+        if: steps.semantic.outputs.new_release_published == 'true'
         run: |
+          echo "[CI/CD] Publishing to NuGet.org..."
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
             --source ${{ env.NUGET_ORG_SOURCE }} \
             --api-key ${{ secrets.NUGET_API_KEY }} \
@@ -131,17 +146,18 @@ jobs:
       # Publish to GitHub Packages
       # ----------------------------
       - name: Publish to GitHub Packages
-        if: startsWith(github.ref, 'refs/tags/')
+        if: steps.semantic.outputs.new_release_published == 'true'
         run: |
+          echo "[CI/CD] Publishing to GitHub Packages..."
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
             --source ${{ env.GITHUB_NUGET_SOURCE }} \
-            --api-key ${{ secrets.NUGET_PACKAGE_TOKEN }} \
+            --api-key ${{ secrets.GITHUB_PACKAGE_TOKEN }} \
             --skip-duplicate
 
       # ----------------------------
-      # Debug version & packages
+      # Debug info
       # ----------------------------
-      - name: Debug version & packages
+      - name: Debug
         run: |
-          echo "VERSION=${VERSION}"
+          echo "[CI/CD] Workflow completed. VERSION=${VERSION}"
           ls -la ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
