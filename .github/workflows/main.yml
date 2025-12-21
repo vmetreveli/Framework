@@ -147,16 +147,6 @@ jobs:
           echo "[CI/CD] Pack completed. Files in ${{ env.PACKAGE_OUTPUT_DIRECTORY }}:"
           ls -la ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
-      # ----------------------------
-      # Publish to NuGet.org
-      # ----------------------------
-      - name: Publish to NuGet.org
-        run: |
-          echo "[CI/CD] Publishing to NuGet.org..."
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
-            --source ${{ env.NUGET_ORG_SOURCE }} \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --skip-duplicate
 
       # ----------------------------
       # Publish to GitHub Packages
