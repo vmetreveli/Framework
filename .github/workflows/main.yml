@@ -11,14 +11,15 @@ on:
 env:
   PROJECT_PATH: Meadow_Framework/Meadow_Framework.csproj
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
-  NUGET_ORG_SOURCE: https://api.nuget.org/v3/index.json
   GITHUB_NUGET_SOURCE: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+  NUGET_ORG_SOURCE: https://api.nuget.org/v3/index.json
+  GITHUB_PACKAGE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NUGET_PACKAGE_TOKEN: ${{ secrets.NUGET_API_KEY }}
 
 jobs:
   release:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     permissions:
       contents: write
       packages: write
@@ -30,9 +31,7 @@ jobs:
           fetch-depth: 0
 
       - name: Log start
-        run: |
-          log() { echo "[CI/CD] $1"; }
-          log "Workflow started on ref: $GITHUB_REF"
+        run: echo "[CI/CD] Workflow started on ref: $GITHUB_REF"
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -48,13 +47,13 @@ jobs:
             @semantic-release/github \
             @semantic-release/exec
 
-      - name: Determine VERSION
+      - name: Determine VERSION and Create Tag
         id: version
         run: |
           set -e
           log() { echo "[CI/CD] $1"; }
 
-          # Try semantic-release
+          # Run semantic-release dry-run to determine next version
           VERSION=$(npx semantic-release --branches master --dry-run --ci 2>/dev/null | grep "Next release version" | awk '{print $4}' || true)
 
           if [[ -n "$VERSION" ]]; then
@@ -68,17 +67,16 @@ jobs:
             log "Fallback patch increment version: $VERSION"
           fi
 
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          # Create Git tag automatically
+          if [[ ! "$GITHUB_REF" =~ refs/tags/ ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag -a "v$VERSION" -m "Release v$VERSION"
+            git push origin "v$VERSION"
+            log "Created and pushed Git tag v$VERSION"
+          fi
 
-      - name: Create Git tag
-        if: "!startsWith(github.ref, 'refs/tags/')"
-        run: |
-          log() { echo "[CI/CD] $1"; }
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v${VERSION}" -m "Release v${VERSION}"
-          git push origin "v${VERSION}"
-          log "Created and pushed Git tag v${VERSION}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -86,73 +84,37 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore
-        run: |
-          echo "[CI/CD] Restoring dependencies..."
-          dotnet restore ${{ env.PROJECT_PATH }}
+        run: dotnet restore ${{ env.PROJECT_PATH }} --configfile ./nuget.config
 
       - name: Build
-        run: |
-          echo "[CI/CD] Building project..."
-          dotnet build ${{ env.PROJECT_PATH }} \
-            --configuration Release \
-            --no-restore \
-            /p:Version=${{ env.VERSION }}
+        run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore /p:Version=${{ env.VERSION }}
 
       - name: Test
-        run: |
-          echo "[CI/CD] Running tests..."
-          dotnet test ${{ env.PROJECT_PATH }} \
-            --configuration Release \
-            --no-build \
-            /p:Version=${{ env.VERSION }}
+        run: dotnet test ${{ env.PROJECT_PATH }} --configuration Release --no-build /p:Version=${{ env.VERSION }}
 
       - name: Pack
         run: |
-          echo "[CI/CD] Packing project..."
           mkdir -p ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
-          dotnet pack ${{ env.PROJECT_PATH }} \
-            --configuration Release \
-            --no-build \
-            --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} \
-            /p:Version=${{ env.VERSION }}
-          echo "[CI/CD] Pack completed. Files in ${{ env.PACKAGE_OUTPUT_DIRECTORY }}:"
+          dotnet pack ${{ env.PROJECT_PATH }} --configuration Release --no-build --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} /p:Version=${{ env.VERSION }}
           ls -la ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
-
-      - name: Authenticate GitHub Packages
-        run: |
-          echo "[CI/CD] Authenticating GitHub Packages..."
-          dotnet nuget remove source github || true
-          dotnet nuget add source --username ${{ github.actor }} \
-            --password ${{ secrets.GITHUB_TOKEN }} \
-            --store-password-in-clear-text \
-            --name github ${{ env.GITHUB_NUGET_SOURCE }}
-
-      - name: Authenticate nuget.org
-        run: |
-          echo "[CI/CD] Authenticating nuget.org..."
-          dotnet nuget remove source nuget-org || true
-          dotnet nuget add source --username ${{ github.actor }} \
-            --password ${{ secrets.NUGET_API_KEY }} \
-            --store-password-in-clear-text \
-            --name nuget-org ${{ env.NUGET_ORG_SOURCE }}
 
       - name: Publish to GitHub Packages
         run: |
           echo "[CI/CD] Publishing to GitHub Packages..."
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
-            --source github \
-            --api-key ${{ secrets.GITHUB_TOKEN }} \
-            --skip-duplicate
+            --source GitHub \
+            --api-key $GITHUB_PACKAGE_TOKEN \
+            --skip-duplicate \
+            --configfile ./nuget.config
 
       - name: Publish to nuget.org
         run: |
           echo "[CI/CD] Publishing to nuget.org..."
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
-            --source nuget-org \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --skip-duplicate
+            --source nuget.org \
+            --api-key $NUGET_PACKAGE_TOKEN \
+            --skip-duplicate \
+            --configfile ./nuget.config
 
       - name: Debug
-        run: |
-          echo "[CI/CD] Workflow completed. VERSION=${VERSION}"
-          ls -la ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        run: ls -la ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
