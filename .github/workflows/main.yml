@@ -42,7 +42,7 @@ jobs:
           git branch --contains HEAD | grep master
 
       # ----------------------------
-      # Set version
+      # Set VERSION
       # ----------------------------
       - name: Set VERSION from tag
         if: startsWith(github.ref, 'refs/tags/')
@@ -111,8 +111,7 @@ jobs:
       # Pack
       # ----------------------------
       - name: Pack
-        if: |
-          startsWith(github.ref, 'refs/tags/') || (steps.semantic.outputs.new_release_published && steps.semantic.outputs.new_release_published == 'true')
+        if: startsWith(github.ref, 'refs/tags/') || (steps.semantic.outputs.new_release_published && steps.semantic.outputs.new_release_published == 'true')
         run: |
           dotnet pack ${{ env.PROJECT_PATH }} \
             --configuration Release \
@@ -121,11 +120,10 @@ jobs:
             /p:Version=${{ env.VERSION }}
 
       # ----------------------------
-      # Publish NuGet.org
+      # Publish to NuGet.org
       # ----------------------------
       - name: Publish to NuGet.org
-        if: |
-          startsWith(github.ref, 'refs/tags/') || (steps.semantic.outputs.new_release_published && steps.semantic.outputs.new_release_published == 'true')
+        if: startsWith(github.ref, 'refs/tags/') || (steps.semantic.outputs.new_release_published && steps.semantic.outputs.new_release_published == 'true')
         run: |
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
             --source ${{ env.NUGET_ORG_SOURCE }} \
@@ -133,13 +131,20 @@ jobs:
             --skip-duplicate
 
       # ----------------------------
-      # Publish GitHub Packages
+      # Publish to GitHub Packages
       # ----------------------------
       - name: Publish to GitHub Packages
-        if: |
-          startsWith(github.ref, 'refs/tags/') || (steps.semantic.outputs.new_release_published && steps.semantic.outputs.new_release_published == 'true')
+        if: startsWith(github.ref, 'refs/tags/') || (steps.semantic.outputs.new_release_published && steps.semantic.outputs.new_release_published == 'true')
         run: |
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
             --source ${{ env.GITHUB_NUGET_SOURCE }} \
             --api-key ${{ secrets.NUGET_PACKAGE_TOKEN }} \
             --skip-duplicate
+
+      # ----------------------------
+      # Debug step (optional)
+      # ----------------------------
+      - name: Debug version & packages
+        run: |
+          echo "VERSION=${VERSION}"
+          ls -la ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
