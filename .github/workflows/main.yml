@@ -153,6 +153,9 @@ jobs:
       - name: Authenticate GitHub Packages
         run: |
           echo "[CI/CD] Authenticating GitHub Packages..."
+          # Remove existing source if present
+          dotnet nuget remove source github || true
+          # Add GitHub Packages source
           dotnet nuget add source --username ${{ github.actor }} \
             --password ${{ secrets.GITHUB_TOKEN }} \
             --store-password-in-clear-text \
