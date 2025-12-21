@@ -1,5 +1,5 @@
-﻿using AutoMapper.Extensions.ExpressionMapping;
-using MassTransit;
+﻿using MassTransit;
+using MassTransit.MultiBus;
 using Meadow_Framework.Framework.Abstractions.Commands;
 using Meadow_Framework.Framework.Abstractions.Dispatchers;
 using Meadow_Framework.Framework.Abstractions.Events;
@@ -54,11 +54,6 @@ public static class Extensions
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();
             });
-
-        services
-            .AddAutoMapper(cfg =>
-                    cfg.AddExpressionMapping(),
-                Assembly.GetExecutingAssembly());
 
         return services;
     }
