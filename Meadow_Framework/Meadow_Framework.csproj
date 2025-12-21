@@ -17,7 +17,6 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <LangVersion>13</LangVersion>
         <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
-        <Version />
     </PropertyGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
