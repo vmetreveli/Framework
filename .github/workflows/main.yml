@@ -12,7 +12,7 @@ env:
   PROJECT_PATH: Meadow_Framework/Meadow_Framework.csproj
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
   NUGET_ORG_SOURCE: https://api.nuget.org/v3/index.json
-  GITHUB_NUGET_SOURCE: https://nuget.pkg.github.com/vmetreveli/index.json
+  GITHUB_NUGET_SOURCE: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
 
 jobs:
   release:
@@ -41,7 +41,7 @@ jobs:
           log "Workflow started on ref: $GITHUB_REF"
 
       # ----------------------------
-      # Setup Node (for semantic-release)
+      # Setup Node for semantic-release
       # ----------------------------
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -69,9 +69,9 @@ jobs:
           set -e
           log() { echo "[CI/CD] $1"; }
 
-          # Try semantic-release in dry-run mode to get next version
+          # Try semantic-release dry-run to get next version
           NEXT_VERSION=$(npx semantic-release --branches master --dry-run --ci | grep "Next release version" | awk '{print $4}' || true)
-          
+
           if [[ -n "$NEXT_VERSION" ]]; then
             VERSION="$NEXT_VERSION"
             log "Semantic-release determined version: $VERSION"
@@ -147,6 +147,27 @@ jobs:
           echo "[CI/CD] Pack completed. Files in ${{ env.PACKAGE_OUTPUT_DIRECTORY }}:"
           ls -la ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
+      # ----------------------------
+      # Authenticate GitHub Packages
+      # ----------------------------
+      - name: Authenticate GitHub Packages
+        run: |
+          echo "[CI/CD] Authenticating GitHub Packages..."
+          dotnet nuget add source --username ${{ github.actor }} \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text \
+            --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+      # ----------------------------
+      # Publish to NuGet.org
+      # ----------------------------
+      - name: Publish to NuGet.org
+        run: |
+          echo "[CI/CD] Publishing to NuGet.org..."
+          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
+            --source ${{ env.NUGET_ORG_SOURCE }} \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --skip-duplicate
 
       # ----------------------------
       # Publish to GitHub Packages
@@ -155,8 +176,8 @@ jobs:
         run: |
           echo "[CI/CD] Publishing to GitHub Packages..."
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
-            --source ${{ env.GITHUB_NUGET_SOURCE }} \
-            --api-key ${{ secrets.NUGET_PACKAGE_TOKEN }} \
+            --source github \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
             --skip-duplicate
 
       # ----------------------------
