@@ -20,6 +20,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,12 +48,19 @@ jobs:
 
       - name: Install semantic-release & plugins
         if: "!startsWith(github.ref, 'refs/tags/')"
-        run: npm install --no-save semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/github @semantic-release/exec
+        run: |
+          npm install --no-save \
+            semantic-release \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator \
+            @semantic-release/github \
+            @semantic-release/exec
 
       - name: Run semantic-release
         if: "!startsWith(github.ref, 'refs/tags/')"
         id: semantic
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NUGET_PACKAGE_TOKEN: ${{ secrets.NUGET_PACKAGE_TOKEN }}
         run: |
           npx semantic-release
@@ -65,27 +73,60 @@ jobs:
         run: dotnet restore ${{ env.PROJECT_PATH }}
 
       - name: Build project
-        run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore ${{ env.VERSION && format('/p:Version={0}', env.VERSION) || '' }}
+        run: |
+          dotnet build ${{ env.PROJECT_PATH }} \
+            --configuration Release \
+            --no-restore \
+            ${{ env.VERSION && format('/p:Version={0}', env.VERSION) || '' }}
 
       - name: Test
         if: startsWith(github.ref, 'refs/tags/')
-        run: dotnet test ${{ env.PROJECT_PATH }} --configuration Release /p:Version=${{ env.VERSION }} --no-build
+        run: |
+          dotnet test ${{ env.PROJECT_PATH }} \
+            --configuration Release \
+            /p:Version=${{ env.VERSION }} \
+            --no-build
 
       - name: Pack NuGet package
-        if: (startsWith(github.ref, 'refs/tags/')) || (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
-        run: dotnet pack ${{ env.PROJECT_PATH }} --configuration Release --no-build --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} ${{ env.VERSION && format('/p:Version={0}', env.VERSION) || '' }}
+        if: |
+          startsWith(github.ref, 'refs/tags/') ||
+          (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
+        run: |
+          dotnet pack ${{ env.PROJECT_PATH }} \
+            --configuration Release \
+            --no-build \
+            --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} \
+            ${{ env.VERSION && format('/p:Version={0}', env.VERSION) || '' }}
 
       - name: Publish to NuGet.org
-        if: (startsWith(github.ref, 'refs/tags/')) || (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
-        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ env.NUGET_SOURCE }} --skip-duplicate
+        if: |
+          startsWith(github.ref, 'refs/tags/') ||
+          (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
+        run: |
+          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source ${{ env.NUGET_SOURCE }} \
+            --skip-duplicate
 
       - name: Authenticate with GitHub Packages
-        if: (startsWith(github.ref, 'refs/tags/')) || (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
+        if: |
+          startsWith(github.ref, 'refs/tags/') ||
+          (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
         run: |
-          dotnet nuget add source --username ${{ github.repository_owner }} --password ${{ secrets.NUGET_PACKAGE_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+          dotnet nuget add source \
+            --username ${{ github.repository_owner }} \
+            --password ${{ secrets.NUGET_PACKAGE_TOKEN }} \
+            --store-password-in-clear-text \
+            --name github \
+            "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - name: Publish to GitHub Packages
-        if: (startsWith(github.ref, 'refs/tags/')) || (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
-        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg --source github --skip-duplicate
+        if: |
+          startsWith(github.ref, 'refs/tags/') ||
+          (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
         env:
           NUGET_PACKAGE_TOKEN: ${{ secrets.NUGET_PACKAGE_TOKEN }}
+        run: |
+          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
+            --source github \
+            --skip-duplicate
