@@ -1,19 +1,22 @@
-name: Build & Publish
+name: CI/CD Release
 
 on:
   push:
-    tags:
-      - 'v*'   # example: v1.0.0
+    branches:
+      - master
+  workflow_dispatch:
 
-permissions:
-  contents: read
-  packages: write
+env:
+  PROJECT_PATH: Meadow_Framework/Meadow_Framework.csproj
+  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,42 +26,35 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: Create artifacts directory
-        run: mkdir -p artifacts
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Restore
-        run: dotnet restore Meadow_Framework.sln
+      - name: Install semantic-release & plugins
+        run: npm install --no-save semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/github @semantic-release/exec
 
-      - name: Build
-        run: dotnet build Meadow_Framework.sln --configuration Release --no-restore
+      - name: Run semantic-release
+        id: semantic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx semantic-release
 
-      - name: Test
-        run: dotnet test Meadow_Framework.sln --configuration Release --no-build
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_PATH }}
 
-      # -------------------------
-      # Version from git tag
-      # -------------------------
-      - name: Extract version
-        id: version
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+      - name: Build project
+        run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
 
-      # -------------------------
-      # Pack Project
-      # -------------------------
-      - name: Pack Meadow_Framework
-        run: dotnet pack Meadow_Framework/Meadow_Framework.csproj --configuration Release --no-build -p:PackageVersion=${{ steps.version.outputs.VERSION }} --output artifacts
+      - name: Pack NuGet package
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: dotnet pack ${{ env.PROJECT_PATH }} --configuration Release --no-build --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} /p:PackageVersion=${{ steps.semantic.outputs.new_release_version }}
 
-      # -------------------------
-      # Publish to GitHub Packages
-      # -------------------------
-      - name: Publish to GitHub Packages
-        run: dotnet nuget push "artifacts/*.nupkg" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
-
-      - name: Publish symbols to GitHub Packages
-        run: dotnet nuget push "artifacts/*.snupkg" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
-
-      # -------------------------
-      # Publish to NuGet.org
-      # -------------------------
       - name: Publish to NuGet.org
-        run: dotnet nuget push "artifacts/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ env.NUGET_SOURCE }} --skip-duplicate
+
+      - name: Publish to GitHub Packages
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --skip-duplicate
