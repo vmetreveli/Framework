@@ -127,14 +127,6 @@ jobs:
             --store-password-in-clear-text \
             --name github ${{ env.GITHUB_NUGET_SOURCE }}
 
-      - name: Authenticate nuget.org
-        run: |
-          echo "[CI/CD] Authenticating nuget.org..."
-          dotnet nuget remove source nuget-org || true
-          dotnet nuget add source --username ${{ github.actor }} \
-            --password ${{ secrets.NUGET_API_KEY }} \
-            --store-password-in-clear-text \
-            --name nuget-org ${{ env.NUGET_ORG_SOURCE }}
 
       - name: Publish to GitHub Packages
         run: |
@@ -144,13 +136,6 @@ jobs:
             --api-key ${{ secrets.GITHUB_TOKEN }} \
             --skip-duplicate
 
-      - name: Publish to nuget.org
-        run: |
-          echo "[CI/CD] Publishing to nuget.org..."
-          dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
-            --source nuget-org \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --skip-duplicate
 
       - name: Debug
         run: |
