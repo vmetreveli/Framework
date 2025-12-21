@@ -1,78 +1,91 @@
-name: Action to build and publish the project as a nuget package to github package registry
+name: CI/CD Release
 
 on:
   push:
-    branches: [master]
-      
-jobs:
-  build:
-    runs-on: ubuntu-latest    
-    outputs: 
-      Version: ${{ steps.gitversion.outputs.SemVer }}
-      CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }} 
+    branches:
+      - master
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+  workflow_dispatch:
 
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0 #fetch-depth is needed for GitVersion
-        
-    #Install and calculate the new version with GitVersion  
-    - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.7
-      with:
-        versionSpec: 5.x
-    - name: Determine Version
-      uses: gittools/actions/gitversion/execute@v0.9.7
-      id: gitversion # step id used as reference for output values
-    - name: Display GitVersion outputs
-      run: |
-        echo "Version: ${{ steps.gitversion.outputs.SemVer }}"
-        echo "CommitsSinceVersionSource: ${{ steps.gitversion.outputs.CommitsSinceVersionSource }}"
-    
-    #Build/pack the project
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 6.0.x
-    - name: Build and Pack NuGet package
-      run: dotnet pack src/services/Florage.Shared/Florage.Shared.csproj -p:Version='${{ steps.gitversion.outputs.SemVer }}' -c Release
-    - name: Upload NuGet package to GitHub
-      uses: actions/upload-artifact@v2
-      with:
-        name: nugetPackage
-        path: bin/Release/ 
-        
+env:
+  PROJECT_PATH: Meadow_Framework/Meadow_Framework.csproj
+  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
+  NUGET_SOURCE: https://api.nuget.org/v3/index.json
+
+jobs:
   release:
-    runs-on: ubuntu-latest    
-    needs: build
-    if: github.ref == 'refs/heads/master' # only run job if on the master branch   
-    
-    steps:  
-    #Push NuGet package to GitHub packages
-    - name: Download nuget package artifact
-      uses: actions/download-artifact@v1.0.0
-      with:
-        name: nugetPackage
-    - name: Prep packages
-      run: dotnet nuget add source --username yourusername --password ${{ secrets.NUGET_PACKAGE_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/yourusername/index.json"
-    - name: Push package to GitHub packages 
-      if: needs.build.outputs.CommitsSinceVersionSource > 0 #Only release if there has been a commit/version change  
-      run: dotnet nuget push nugetPackage/*.nupkg --api-key ${{ secrets.NUGET_PACKAGE_TOKEN }}  --source "github"
-    
-    #Create release
-    - name: Create Release
-      if: 1 == 0 #needs.build.outputs.CommitsSinceVersionSource > 0 #Only release if there has been a commit/version change
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.NUGET_PACKAGE_TOKEN }} 
-      with:
-        tag_name: ${{ needs.build.outputs.Version }}
-        release_name: Release ${{ needs.build.outputs.Version }}
-    - name: Create Release
-      if: needs.build.outputs.CommitsSinceVersionSource > 0 #Only release if there has been a commit/version change
-      uses: ncipollo/release-action@v1
-      with:
-        tag: ${{ needs.build.outputs.Version }}
-        name: Release ${{ needs.build.outputs.Version }}
-        artifacts: "nugetPackage/*"
-        token: ${{ secrets.NUGET_PACKAGE_TOKEN }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify commit exists in origin/master (for tags only)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+          git branch --remote --contains | grep origin/master
+
+      - name: Set VERSION from tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Setup Node
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install semantic-release & plugins
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        run: npm install --no-save semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/github @semantic-release/exec
+
+      - name: Run semantic-release
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        id: semantic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx semantic-release
+
+      - name: Set VERSION from semantic-release
+        if: "!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true'"
+        run: echo "VERSION=${{ steps.semantic.outputs.new_release_version }}" >> $GITHUB_ENV
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Build project
+        run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore ${{ env.VERSION && format('/p:Version={0}', env.VERSION) || '' }}
+
+      - name: Test
+        if: startsWith(github.ref, 'refs/tags/')
+        run: dotnet test ${{ env.PROJECT_PATH }} --configuration Release /p:Version=${{ env.VERSION }} --no-build
+
+      - name: Pack NuGet package
+        if: (startsWith(github.ref, 'refs/tags/')) || (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
+        run: dotnet pack ${{ env.PROJECT_PATH }} --configuration Release --no-build --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} ${{ env.VERSION && format('/p:Version={0}', env.VERSION) || '' }}
+
+      - name: Publish to NuGet.org
+        if: (startsWith(github.ref, 'refs/tags/')) || (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
+        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source ${{ env.NUGET_SOURCE }} --skip-duplicate
+
+      - name: Authenticate with GitHub Packages
+        if: (startsWith(github.ref, 'refs/tags/')) || (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
+        run: |
+          dotnet nuget add source --username ${{ github.repository_owner }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+      - name: Publish to GitHub Packages
+        if: (startsWith(github.ref, 'refs/tags/')) || (!startsWith(github.ref, 'refs/tags/') && steps.semantic.outputs.new_release_published == 'true')
+        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg --source github --skip-duplicate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
