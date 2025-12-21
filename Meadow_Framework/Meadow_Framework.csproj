@@ -7,8 +7,10 @@
         <!-- Package metadata for NuGet packaging -->
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>Meadow_Framework</PackageId>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/vmetreveli/Meadow_Framework</RepositoryUrl>
         <Authors>Meadow</Authors>
-        <Company>Meadow</Company>
+        <Company>Meadow</Company>`
         <Description>Common framework abstractions and infrastructure for Meadow projects.</Description>
         <PackageTags>framework;meadow;library</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
