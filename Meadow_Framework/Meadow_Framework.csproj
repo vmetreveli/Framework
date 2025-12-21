@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <!-- Package metadata for NuGet packaging -->
+        <Version>0.0.0</Version>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>Meadow_Framework</PackageId>
         <RepositoryType>git</RepositoryType>
@@ -54,4 +55,9 @@
     <ItemGroup>
         <None Include="4518763_framework_phoenix_icon.png" Pack="True" PackagePath="" />
     </ItemGroup>
+    <Target Name="PrepareReleaseNotes" BeforeTargets="GenerateNuspec">
+        <PropertyGroup>
+            <PackageDescription>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../RELEASE-NOTES"))</PackageDescription>
+        </PropertyGroup>
+    </Target>
 </Project>
