@@ -54,15 +54,15 @@ jobs:
           set -e
           log() { echo "[CI/CD] $1"; }
 
-          NEXT_VERSION=$(npx semantic-release --branches master --dry-run --ci | grep "Next release version" | awk '{print $4}' || true)
+          # Try semantic-release
+          VERSION=$(npx semantic-release --branches master --dry-run --ci 2>/dev/null | grep "Next release version" | awk '{print $4}' || true)
 
-          if [[ -n "$NEXT_VERSION" ]]; then
-            VERSION="$NEXT_VERSION"
+          if [[ -n "$VERSION" ]]; then
             log "Semantic-release determined version: $VERSION"
           else
+            # Fallback: increment patch of latest tag
             LATEST_TAG=$(git tag --sort=-creatordate | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n1 || echo "v0.0.0")
-            VERSION="${LATEST_TAG#v}"
-            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+            IFS='.' read -r MAJOR MINOR PATCH <<< "${LATEST_TAG#v}"
             PATCH=$((PATCH + 1))
             VERSION="$MAJOR.$MINOR.$PATCH"
             log "Fallback patch increment version: $VERSION"
