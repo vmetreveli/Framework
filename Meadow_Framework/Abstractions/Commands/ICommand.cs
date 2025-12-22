@@ -1,6 +1,6 @@
-﻿using Meadow_Framework.Framework.Abstractions.Messaging;
+﻿using Meadow_Framework.Abstractions.Messaging;
 
-namespace Meadow_Framework.Framework.Abstractions.Commands;
+namespace Meadow_Framework.Abstractions.Commands;
 
 /// <summary>
 ///     Marker interface for commands in the system.
