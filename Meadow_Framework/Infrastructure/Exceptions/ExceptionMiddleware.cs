@@ -107,50 +107,66 @@ public class ExceptionMiddleware
 
     private async Task HandleApiException(ApiException ex, HttpContext context)
     {
-        if (!context.Response.HasStarted)
+        if (context.Response.HasStarted) return;
+
+        var externalApiProblemDetails = TryGetExternalApiProblemDetails(ex);
+        var apiProblemDetails = CreateApiProblemDetails(ex, context, externalApiProblemDetails);
+
+        AddExtensions(apiProblemDetails, externalApiProblemDetails);
+        AddHeaders(ex, context);
+
+        await SetResponse(context, apiProblemDetails);
+    }
+
+    private static ApiProblemDetails? TryGetExternalApiProblemDetails(ApiException ex)
+    {
+        try
         {
-            ApiProblemDetails? externalApiProblemDetails = null;
-
-            try
-            {
-                externalApiProblemDetails = ex.DeserializeContent<ApiProblemDetails>();
-
-                if (externalApiProblemDetails?.IsApiProblemDetails != true) externalApiProblemDetails = null;
-            }
-            catch
-            {
-                // Do nothing if the external response is not of type ApiProblemDetails
-            }
-
-            ApiProblemDetails apiProblemDetails = new()
-            {
-                Status = externalApiProblemDetails?.Status ?? _statusCodes[typeof(InflowException)],
-                Type = externalApiProblemDetails?.Type ?? "HTTP_ERROR",
-                Title = externalApiProblemDetails?.Title ??
-                        ex.Message.Replace(ex.RequestUri?.ToString(), ex.RequestUri?.PathAndQuery),
-                Detail = externalApiProblemDetails?.Detail ??
-                         ex.Message.Replace(ex.RequestUri.ToString(), ex.RequestUri.PathAndQuery),
-                Instance = context.Request.Path,
-                ExternalEndpoint = ex.RequestUri?.PathAndQuery,
-                ValidationErrors = externalApiProblemDetails?.ValidationErrors ?? new Dictionary<string, string[]>(),
-                Severity = externalApiProblemDetails?.Severity ?? LogLevel.Error
-            };
-
-            if (externalApiProblemDetails?.Extensions != null)
-                foreach (KeyValuePair<string, object> item in externalApiProblemDetails.Extensions)
-                {
-                    object? value = item.Value is JObject jObject
-                        ? jObject.ToObject<Dictionary<string, object>>()
-                        : item.Value;
-
-                    apiProblemDetails.Extensions.Add(item.Key, value);
-                }
-
-            if (ex.Headers.TryGetValues("X-Sca-Requirements", out var scaRequirements))
-                context.Response.Headers.Append("X-Sca-Requirements", new StringValues(scaRequirements.ToArray()));
-
-            await SetResponse(context, apiProblemDetails);
+            var details = ex.DeserializeContent<ApiProblemDetails>();
+            return details?.IsApiProblemDetails == true ? details : null;
         }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private ApiProblemDetails CreateApiProblemDetails(ApiException ex, HttpContext context,
+        ApiProblemDetails? externalApiProblemDetails)
+    {
+        return new ApiProblemDetails
+        {
+            Status = externalApiProblemDetails?.Status ?? _statusCodes[typeof(InflowException)],
+            Type = externalApiProblemDetails?.Type ?? "HTTP_ERROR",
+            Title = externalApiProblemDetails?.Title ??
+                    ex.Message.Replace(ex.RequestUri?.ToString(), ex.RequestUri?.PathAndQuery),
+            Detail = externalApiProblemDetails?.Detail ??
+                     ex.Message.Replace(ex.RequestUri.ToString(), ex.RequestUri.PathAndQuery),
+            Instance = context.Request.Path,
+            ExternalEndpoint = ex.RequestUri?.PathAndQuery,
+            ValidationErrors = externalApiProblemDetails?.ValidationErrors ?? new Dictionary<string, string[]>(),
+            Severity = externalApiProblemDetails?.Severity ?? LogLevel.Error
+        };
+    }
+
+    private static void AddExtensions(ApiProblemDetails apiProblemDetails, ApiProblemDetails? externalApiProblemDetails)
+    {
+        if (externalApiProblemDetails?.Extensions == null) return;
+
+        foreach (var item in externalApiProblemDetails.Extensions)
+        {
+            var value = item.Value is JObject jObject
+                ? jObject.ToObject<Dictionary<string, object>>()
+                : item.Value;
+
+            apiProblemDetails.Extensions.Add(item.Key, value);
+        }
+    }
+
+    private static void AddHeaders(ApiException ex, HttpContext context)
+    {
+        if (ex.Headers.TryGetValues("X-Sca-Requirements", out var scaRequirements))
+            context.Response.Headers.Append("X-Sca-Requirements", new StringValues(scaRequirements.ToArray()));
     }
 
     private async Task HandleException(Exception ex, HttpContext context)

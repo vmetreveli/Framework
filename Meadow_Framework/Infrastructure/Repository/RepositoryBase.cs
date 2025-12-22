@@ -80,7 +80,7 @@ public abstract class RepositoryBase<TDbContext, TEntity, TId>(TDbContext contex
     /// </summary>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A list of entities.</returns>
-    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+    public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await context
             .Set<TEntity>()
@@ -118,7 +118,7 @@ public abstract class RepositoryBase<TDbContext, TEntity, TId>(TDbContext contex
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A list of entities.</returns>
     public virtual async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         return await context
             .Set<TEntity>()
@@ -133,7 +133,7 @@ public abstract class RepositoryBase<TDbContext, TEntity, TId>(TDbContext contex
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A list of entities.</returns>
     public async Task<IEnumerable<TEntity>> FindAsync(Specification<TEntity, TId> specification,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
         return await ApplySpecification(specification)
             .ToListAsync(cancellationToken);
