@@ -75,7 +75,7 @@ public class StringUtilsTests
 
     [Theory]
     [InlineData("ValueOne", TestEnum.ValueOne)]
-    [InlineData("value_one", null)] // The implementation replaces underscores but Enum.TryParse is case insensitive. Wait, implementation replaces "_" with empty. So "value_one" becomes "valueone". Enum.TryParse("valueone", true) should work if "ValueOne" is the name.
+    [InlineData(" ", null)] // The implementation replaces underscores but Enum.TryParse is case insensitive. Wait, implementation replaces "_" with empty. So "value_one" becomes "valueone". Enum.TryParse("valueone", true) should work if "ValueOne" is the name.
     [InlineData("ValueTwo", TestEnum.ValueTwo)]
     [InlineData("Invalid", null)]
     [InlineData(null, null)]

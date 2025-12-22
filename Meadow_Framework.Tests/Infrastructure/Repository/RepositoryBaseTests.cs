@@ -56,7 +56,7 @@ public class RepositoryBaseTests
     public async Task AddAsync_ShouldAddEntity()
     {
         // Arrange
-        using var context = GetDbContext();
+        await using var context = GetDbContext();
         var repository = new TestRepository(context);
         var entity = new TestEntity(Guid.NewGuid(), "Test");
 
@@ -68,11 +68,14 @@ public class RepositoryBaseTests
         context.TestEntities.Should().Contain(entity);
     }
 
+    /// <summary>
+    ///
+    /// </summary>
     [Fact]
     public async Task GetByIdAsync_ShouldReturnEntity_WhenExists()
     {
         // Arrange
-        using var context = GetDbContext();
+        await using var context = GetDbContext();
         var repository = new TestRepository(context);
         var id = Guid.NewGuid();
         var entity = new TestEntity(id, "Test");
@@ -80,7 +83,7 @@ public class RepositoryBaseTests
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetByIdAsync(id);
+        var result = await repository.GetByIdAsync(entity.Id);
 
         // Assert
         result.Should().Be(entity);
@@ -90,7 +93,7 @@ public class RepositoryBaseTests
     public async Task FirstOrDefaultAsync_WithSpecification_ShouldReturnEntity()
     {
         // Arrange
-        using var context = GetDbContext();
+        await using var context = GetDbContext();
         var repository = new TestRepository(context);
         var entity1 = new TestEntity(Guid.NewGuid(), "Alice");
         var entity2 = new TestEntity(Guid.NewGuid(), "Bob");
@@ -106,19 +109,22 @@ public class RepositoryBaseTests
         result.Should().Be(entity1);
     }
     
+    /// <summary>
+    ///
+    /// </summary>
     [Fact]
     public async Task ExistsAsync_ShouldReturnTrue_WhenEntityExists()
     {
         // Arrange
-        using var context = GetDbContext();
-        var repository = new TestRepository(context);
-        var id = Guid.NewGuid();
-        var entity = new TestEntity(id, "Test");
+        await using var context = GetDbContext();
+        TestRepository repository = new TestRepository(context);
+
+        TestEntity entity = new TestEntity(Guid.NewGuid(), "Test");
         await context.TestEntities.AddAsync(entity);
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.ExistsAsync(id);
+        var result = await repository.ExistsAsync(entity.Id);
 
         // Assert
         result.Should().BeTrue();
