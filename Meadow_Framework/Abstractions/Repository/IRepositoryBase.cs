@@ -50,7 +50,7 @@ public interface IRepositoryBase<TEntity, TId>
     /// </summary>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation, with a result of a list of all entities.</returns>
-    Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken);
 
     /// <summary>
     ///     Retrieves entities that match the specified predicate asynchronously.
@@ -73,7 +73,7 @@ public interface IRepositoryBase<TEntity, TId>
     /// <param name="cancellationToken">A token to cancel the asynchronous operation.</param>
     /// <returns>A task representing the asynchronous operation, with a result of a list of entities that match the predicate.</returns>
     Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken);
 
     /// <summary>
     ///     Asynchronously retrieves entities that match the specified specification.
@@ -85,7 +85,7 @@ public interface IRepositoryBase<TEntity, TId>
     ///     specification.
     /// </returns>
     Task<IEnumerable<TEntity>> FindAsync(Specification<TEntity, TId> specification,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken);
 
     /// <summary>
     ///     Asynchronously checks if an entity with the specified identifier exists.

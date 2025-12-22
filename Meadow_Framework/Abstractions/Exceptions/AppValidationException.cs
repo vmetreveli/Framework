@@ -10,12 +10,19 @@ namespace Meadow_Framework.Abstractions.Exceptions;
 /// </summary>
 public class AppValidationException : InflowException
 {
+     /// <summary>
+     ///
+     /// </summary>
      public AppValidationException()
         : base("VALIDATION_ERROR", "Validation error(s) occurred", null, null, LogLevel.Warning)
     {
         Failures = new Dictionary<string, string[]>();
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="logLevel"></param>
     [ExcludeFromCodeCoverage]
     public AppValidationException(LogLevel logLevel)
         : base("VALIDATION_ERROR", "Validation error(s) occurred", null, null, logLevel)
@@ -23,6 +30,10 @@ public class AppValidationException : InflowException
         Failures = new Dictionary<string, string[]>();
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="message"></param>
     [ExcludeFromCodeCoverage]
     public AppValidationException(string message)
         : base("VALIDATION_ERROR", "Validation error(s) occurred", message, null, LogLevel.Warning)
@@ -30,18 +41,34 @@ public class AppValidationException : InflowException
         Failures = new Dictionary<string, string[]>();
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="message"></param>
+    /// <param name="logLevel"></param>
     public AppValidationException(string message, LogLevel logLevel)
         : base("VALIDATION_ERROR", "Validation error(s) occurred", message, null, logLevel)
     {
         Failures = new Dictionary<string, string[]>();
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="propertyName"></param>
+    /// <param name="errorMessage"></param>
     public AppValidationException(string propertyName, string errorMessage)
         : this(errorMessage, LogLevel.Warning)
     {
         Failures.Add(propertyName, [errorMessage]);
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="propertyName"></param>
+    /// <param name="errorMessage"></param>
+    /// <param name="logLevel"></param>
     [ExcludeFromCodeCoverage]
     public AppValidationException(string propertyName, string errorMessage, LogLevel logLevel)
         : this(errorMessage, logLevel)
@@ -49,6 +76,10 @@ public class AppValidationException : InflowException
       Failures.Add(propertyName, [errorMessage]);
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="failures"></param>
     [ExcludeFromCodeCoverage]
     public AppValidationException(List<ValidationFailure> failures)
         : this(string.Join(' ', failures.Select(i => i.ErrorMessage)), LogLevel.Warning)
@@ -56,6 +87,11 @@ public class AppValidationException : InflowException
         AddFailures(failures);
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="failures"></param>
+    /// <param name="logLevel"></param>
     public AppValidationException(List<ValidationFailure> failures, LogLevel logLevel)
         : this(string.Join(' ', failures.Select(i => i.ErrorMessage)), logLevel)
     {
