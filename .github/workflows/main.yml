@@ -10,6 +10,7 @@ on:
 
 env:
   PROJECT_PATH: Meadow_Framework/Meadow_Framework.csproj
+  TEST_PROJECT_PATH: Meadow_Framework.Tests/Meadow_Framework.Tests.csproj
   PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}/output
   NUGET_ORG_SOURCE: https://api.nuget.org/v3/index.json
   GITHUB_NUGET_SOURCE: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
@@ -89,6 +90,7 @@ jobs:
         run: |
           echo "[CI/CD] Restoring dependencies..."
           dotnet restore ${{ env.PROJECT_PATH }}
+          dotnet restore ${{ env.TEST_PROJECT_PATH }}
 
       - name: Build
         run: |
@@ -101,9 +103,9 @@ jobs:
       - name: Test
         run: |
           echo "[CI/CD] Running tests..."
-          dotnet test ${{ env.PROJECT_PATH }} \
+          dotnet test ${{ env.TEST_PROJECT_PATH }} \
             --configuration Release \
-            --no-build \
+            --no-restore \
             /p:Version=${{ env.VERSION }}
 
       - name: Pack
