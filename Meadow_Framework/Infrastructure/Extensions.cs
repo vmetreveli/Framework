@@ -20,6 +20,9 @@ using Quartz;
 
 namespace Meadow_Framework.Infrastructure;
 
+/// <summary>
+///
+/// </summary>
 public static class Extensions
 {
     /// <summary>
@@ -28,17 +31,21 @@ public static class Extensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection" /> to which the services will be added.</param>
     /// <param name="configuration">The application configuration used for settings like database connections.</param>
-    /// <param name="assembly">The assembly containing handlers for commands, queries, and events.</param>
+    /// <param name="assemblies"></param>
     /// <returns>The modified <see cref="IServiceCollection" />.</returns>
     public static IServiceCollection AddFramework(
         this IServiceCollection services,
         IConfiguration configuration,
-        Assembly assembly)
+        params Assembly[] assemblies)
     {
-        services.AddCommands(assembly);
-        services.AddQueries(assembly);
-        services.AddEvents(assembly);
-        services.AddEventBus(configuration);
+        foreach (var assembly in assemblies)
+        {
+            services.AddCommands(assembly);
+            services.AddQueries(assembly);
+            services.AddEvents(assembly);
+        }
+
+        services.AddEventBus(configuration, assemblies);
         services.AddScoped<IDispatcher, Dispatcher>();
         services.AddErrorHandling();
 
@@ -204,9 +211,10 @@ public static class Extensions
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection" /> to add the services to.</param>
     /// <param name="configuration">The configuration object for RabbitMQ and Quartz settings.</param>
+    /// <param name="assemblies">The assemblies to scan for consumers.</param>
     /// <returns>The modified <see cref="IServiceCollection" />.</returns>
     private static IServiceCollection AddEventBus(this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration, IEnumerable<Assembly> assemblies)
     {
         var config = configuration.GetSection("AppConfiguration:RabbitMQ").Get<RabbitMqOptions>();
 
@@ -220,7 +228,7 @@ public static class Extensions
 
         services.AddMassTransit(configurator =>
         {
-            var eventConsumer = FindConsumers().ToList(); // Find all event consumers
+            var eventConsumer = FindConsumers(assemblies).ToList(); // Find all event consumers
 
             foreach (var consumer in eventConsumer)
                 configurator.AddConsumer(consumer); // Register each consumer
@@ -245,11 +253,11 @@ public static class Extensions
     /// <summary>
     ///     Finds and returns all classes that implement <see cref="IEventConsumer{TEvent}" /> from all loaded assemblies.
     /// </summary>
+    /// <param name="assemblies">The assemblies to scan.</param>
     /// <returns>A collection of consumer types implementing <see cref="IEventConsumer{TEvent}" />.</returns>
-    private static IEnumerable<Type> FindConsumers()
+    private static IEnumerable<Type> FindConsumers(IEnumerable<Assembly> assemblies)
     {
         var consumerInterfaceType = typeof(IEventConsumer<>);
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         var consumer = new List<Type>();
 
         // Search for classes implementing IEventConsumer<> in loaded assemblies
