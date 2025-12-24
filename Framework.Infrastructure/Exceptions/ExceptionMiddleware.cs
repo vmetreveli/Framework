@@ -99,7 +99,7 @@ public class ExceptionMiddleware
 
             foreach (DictionaryEntry item in ex.Data) apiProblemDetails.Extensions.Add(item.Key.ToString(), item.Value);
 
-            foreach (KeyValuePair<string, string> item in ex.ResponseHeaders) context.Response.Headers.Append(item.Key, item.Value);
+            foreach (var item in ex.ResponseHeaders) context.Response.Headers.Append(item.Key, item.Value);
 
             await SetResponse(context, apiProblemDetails);
         }
@@ -137,9 +137,9 @@ public class ExceptionMiddleware
             };
 
             if (externalApiProblemDetails?.Extensions != null)
-                foreach (KeyValuePair<string, object> item in externalApiProblemDetails.Extensions)
+                foreach (var item in externalApiProblemDetails.Extensions)
                 {
-                    object? value = item.Value is JObject jObject
+                    var value = item.Value is JObject jObject
                         ? jObject.ToObject<Dictionary<string, object>>()
                         : item.Value;
 

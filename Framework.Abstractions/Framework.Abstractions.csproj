@@ -21,23 +21,23 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1"/>
         <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="7.0.2"/>
-        <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
-        <PackageReference Include="FluentValidation" Version="11.11.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
+        <PackageReference Include="EFCore.NamingConventions" Version="9.0.0"/>
+        <PackageReference Include="FluentValidation" Version="11.11.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.4" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="9.0.4"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageReference Include="MassTransit" Version="8.3.6" />
+        <PackageReference Include="MassTransit" Version="8.3.6"/>
         <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1"/>
         <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1"/>
-        <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.4" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.4"/>
         <PackageReference Include="RestEase" Version="1.6.4"/>
     </ItemGroup>
 

@@ -11,20 +11,11 @@ public sealed class PagedQueryHandlerDecorator<TQuery, TResult>(IQueryHandler<TQ
 
         if (query is IPagedQuery pagedQuery)
         {
-            if (pagedQuery.Page <= 0)
-            {
-                pagedQuery.Page = 1;
-            }
+            if (pagedQuery.Page <= 0) pagedQuery.Page = 1;
 
-            if (pagedQuery.Results <= 0)
-            {
-                pagedQuery.Results = defaultResults;
-            }
+            if (pagedQuery.Results <= 0) pagedQuery.Results = defaultResults;
 
-            if (pagedQuery.Results > maxResults)
-            {
-                pagedQuery.Results = maxResults;
-            }
+            if (pagedQuery.Results > maxResults) pagedQuery.Results = maxResults;
         }
 
         return await handler.Handle(query, cancellationToken);
