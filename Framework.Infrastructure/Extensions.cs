@@ -1,4 +1,5 @@
-﻿using AutoMapper.Extensions.ExpressionMapping;
+﻿using System.Reflection;
+using AutoMapper.Extensions.ExpressionMapping;
 using Framework.Abstractions.Events;
 using Framework.Abstractions.Exceptions;
 using Framework.Abstractions.Repository;
@@ -29,9 +30,25 @@ public static class Extensions
         IConfiguration configuration,
         Assembly assembly)
     {
-        services.AddCommands(assembly);
-        services.AddQueries(assembly);
-        services.AddEvents(assembly);
+        return services.AddFramework(configuration, new[] { assembly });
+    }
+
+    /// <summary>
+    ///     Extension method to add the framework services to the <see cref="IServiceCollection" />.
+    ///     This includes commands, queries, events, event bus, error handling, and database configuration.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection" /> to which the services will be added.</param>
+    /// <param name="configuration">The application configuration used for settings like database connections.</param>
+    /// <param name="assemblies">The assemblies containing handlers for commands, queries, and events.</param>
+    /// <returns>The modified <see cref="IServiceCollection" />.</returns>
+    public static IServiceCollection AddFramework(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        params Assembly[] assemblies)
+    {
+        services.AddCommands(assemblies);
+        services.AddQueries(assemblies);
+        services.AddEvents(assemblies);
         services.AddEventBus(configuration);
         services.AddScoped<IDispatcher, Dispatcher>();
         services.AddErrorHandling();
@@ -55,6 +72,7 @@ public static class Extensions
 
         return services;
     }
+
     public static IApplicationBuilder UseMigration<TContext>(this IApplicationBuilder app)
         where TContext : DbContext
     {
@@ -87,14 +105,14 @@ public static class Extensions
     ///     <see cref="ICommandHandler{TCommand}" />.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection" /> to add the services to.</param>
-    /// <param name="assembly">The assembly to scan for command handlers.</param>
+    /// <param name="assemblies">The assemblies to scan for command handlers.</param>
     /// <returns>The modified <see cref="IServiceCollection" />.</returns>
-    private static IServiceCollection AddCommands(this IServiceCollection services, Assembly assembly)
+    private static IServiceCollection AddCommands(this IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
         services.AddScoped<ICommandDispatcher, CommandDispatcher>();
 
         // Get all types that implement ICommandHandler<>
-        var commandHandlerTypes = assembly.GetTypes()
+        var commandHandlerTypes = assemblies.SelectMany(a => a.GetTypes())
             .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
                 .Any(i => i.IsGenericType
                           && (i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)
@@ -120,14 +138,14 @@ public static class Extensions
     ///     Registers all types that implement <see cref="IQueryHandler{TQuery, TResult}" />.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection" /> to add the services to.</param>
-    /// <param name="assembly">The assembly to scan for query handlers.</param>
+    /// <param name="assemblies">The assemblies to scan for query handlers.</param>
     /// <returns>The modified <see cref="IServiceCollection" />.</returns>
-    private static IServiceCollection AddQueries(this IServiceCollection services, Assembly assembly)
+    private static IServiceCollection AddQueries(this IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
         services.AddScoped<IQueryDispatcher, QueryDispatcher>();
 
         // Get all types implementing IQueryHandler<,>
-        var queryHandlerTypes = assembly.GetTypes()
+        var queryHandlerTypes = assemblies.SelectMany(a => a.GetTypes())
             .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IQueryHandler<,>)));
 
@@ -148,14 +166,14 @@ public static class Extensions
     ///     Registers all types that implement <see cref="IEventHandler{TEvent}" />.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection" /> to add the services to.</param>
-    /// <param name="assembly">The assembly to scan for event handlers.</param>
+    /// <param name="assemblies">The assemblies to scan for event handlers.</param>
     /// <returns>The modified <see cref="IServiceCollection" />.</returns>
-    private static IServiceCollection AddEvents(this IServiceCollection services, Assembly assembly)
+    private static IServiceCollection AddEvents(this IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
         services.AddScoped<IEventDispatcher, EventDispatcher>();
 
         // Get all types implementing IEventHandler<>
-        var eventHandlerTypes = assembly.GetTypes()
+        var eventHandlerTypes = assemblies.SelectMany(a => a.GetTypes())
             .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEventHandler<>)));
 
