@@ -76,7 +76,6 @@
     </Target>
 
     <ItemGroup>
-        <ProjectReference Include="..\SensitiveDataAnalyzer\SensitiveDataAnalyzer\SensitiveDataAnalyzer.csproj"
-                          OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+        <ProjectReference Include="..\Meadow_Framework.Analyzer\Meadow_Framework.Analyzer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 </Project>

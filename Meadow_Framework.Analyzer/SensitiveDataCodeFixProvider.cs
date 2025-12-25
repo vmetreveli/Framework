@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace SensitiveDataAnalyzer;
+namespace Meadow_Framework.Analyzer;
 
 /// <summary>
 /// 
@@ -21,8 +21,16 @@ public sealed class SensitiveDataCodeFixProvider : CodeFixProvider
     public override ImmutableArray<string> FixableDiagnosticIds =>
         ImmutableArray.Create(SensitiveDataPropertyAnalyzer.DiagnosticId);
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
     public override FixAllProvider? GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="context"></param>
     public override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
         var diagnostic = context.Diagnostics.Single();

@@ -3,13 +3,14 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using static Microsoft.CodeAnalysis.LanguageNames;
 
-namespace SensitiveDataAnalyzer;
+namespace Meadow_Framework.Analyzer;
 
 /// <summary>
 ///
 /// </summary>
-[DiagnosticAnalyzer(LanguageNames.CSharp)]
+[DiagnosticAnalyzer(CSharp)]
 public sealed class SensitiveDataPropertyAnalyzer : DiagnosticAnalyzer
 {
     /// <summary>

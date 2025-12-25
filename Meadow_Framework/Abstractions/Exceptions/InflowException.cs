@@ -370,7 +370,7 @@ public class InflowException : Exception
     /// <summary>
     ///     Gets or sets the title or summary of the exception.
     /// </summary>
-    [SuppressMessage("Security", "SensitiveDataAnalyzer:Property contains sensitive data",
+    [SuppressMessage("Security", "Meadow_Framework.Analyzer:Property contains sensitive data",
         Justification = "Not needed")]
     public string Title { get; set; }
 
