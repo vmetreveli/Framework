@@ -69,16 +69,14 @@
     <ItemGroup>
         <None Include="4518763_framework_phoenix_icon.png" Pack="True" PackagePath="" />
     </ItemGroup>
-    <ItemGroup>
-        <!-- analyzer part -->
-        <ProjectReference Include="..\Meadow_Framework.Analyzers\Meadow_Framework.Analyzers.csproj"
-                          PrivateAssets="none"
-                          ReferenceOutputAssembly="false"
-                          OutputItemType="Analyzer" />
-    </ItemGroup>
     <Target Name="PrepareReleaseNotes" BeforeTargets="GenerateNuspec">
         <PropertyGroup>
             <PackageDescription>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../RELEASE-NOTES"))</PackageDescription>
         </PropertyGroup>
     </Target>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SensitiveDataAnalyzer\SensitiveDataAnalyzer\SensitiveDataAnalyzer.csproj"
+                          OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+    </ItemGroup>
 </Project>

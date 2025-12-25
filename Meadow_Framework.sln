@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow_Framework", "Meadow_
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow_Framework.Tests", "Meadow_Framework.Tests\Meadow_Framework.Tests.csproj", "{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow_Framework.Analyzers", "Meadow_Framework.Analyzers\Meadow_Framework.Analyzers.csproj", "{AF8AFCDF-B088-430F-93F5-EB49B251A610}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SensitiveDataAnalyzer", "SensitiveDataAnalyzer\SensitiveDataAnalyzer\SensitiveDataAnalyzer.csproj", "{4CC4141A-D410-4EF0-8FEE-DDF474A5A74E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,9 +20,9 @@ Global
 		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AF8AFCDF-B088-430F-93F5-EB49B251A610}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AF8AFCDF-B088-430F-93F5-EB49B251A610}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AF8AFCDF-B088-430F-93F5-EB49B251A610}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF8AFCDF-B088-430F-93F5-EB49B251A610}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CC4141A-D410-4EF0-8FEE-DDF474A5A74E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CC4141A-D410-4EF0-8FEE-DDF474A5A74E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CC4141A-D410-4EF0-8FEE-DDF474A5A74E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CC4141A-D410-4EF0-8FEE-DDF474A5A74E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
