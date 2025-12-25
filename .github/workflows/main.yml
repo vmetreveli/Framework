@@ -5,7 +5,7 @@ on:
     branches:
       - master
     tags:
-      - "v[0-9]+.[0-9]+\.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+"
   workflow_dispatch:
 
 env:
@@ -32,9 +32,10 @@ jobs:
           fetch-depth: 0
 
       - name: Log start
-        run: echo "[CI/CD] Workflow started on ref: $GITHUB_REF"
+        run: |
+          echo "[CI/CD] Workflow started on ref: $GITHUB_REF"
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "22"
