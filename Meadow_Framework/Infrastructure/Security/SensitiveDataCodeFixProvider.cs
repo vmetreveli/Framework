@@ -19,8 +19,16 @@ public class SensitiveDataCodeFixProvider : CodeFixProvider
     /// </summary>
     public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(SensitiveDataAnalyzer.DiagnosticId);
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
     public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="context"></param>
     public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
         var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);

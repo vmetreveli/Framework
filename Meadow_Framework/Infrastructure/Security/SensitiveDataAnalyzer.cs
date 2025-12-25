@@ -20,6 +20,10 @@ public class SensitiveDataAnalyzer : DiagnosticAnalyzer
         DiagnosticSeverity.Info,
         isEnabledByDefault: true);
 
+    // Optimization: Static set for O(1) lookup and case-insensitive matching
+    private static readonly ImmutableHashSet<string> SensitiveNames = 
+        ImmutableHashSet.Create(StringComparer.OrdinalIgnoreCase, "Name", "Email", "SSN", "Password", "UserName");
+
     /// <summary>
     ///
     /// </summary>
@@ -40,12 +44,11 @@ public class SensitiveDataAnalyzer : DiagnosticAnalyzer
     {
         var property = (IPropertySymbol)context.Symbol;
 
+        // Optimization: Check name first as it is the cheapest check and filters most candidates
+        if (!SensitiveNames.Contains(property.Name)) return;
+
         if (!IsStringOrDecimal(property.Type)) return;
         if (!IsDerivedFrom(property.ContainingType, "IntegrationBaseEvent")) return;
-
-        // Heuristic: property names that may be sensitive
-        var sensitiveNames = new[] { "Name", "Email", "SSN", "Password", "UserName" };
-        if (!sensitiveNames.Contains(property.Name)) return;
 
         // Skip if already marked
         var hasAttribute = property.GetAttributes().Any(a => a.AttributeClass?.Name == "SensitiveDataAttribute");
@@ -71,7 +74,7 @@ public class SensitiveDataAnalyzer : DiagnosticAnalyzer
         if (type.SpecialType == SpecialType.System_String || type.SpecialType == SpecialType.System_Decimal)
             return true;
 
-        // Handle List<string>
+        // Handle generic containers of strings (e.g. List<string>, IEnumerable<string>)
         if (type is INamedTypeSymbol namedType &&
             namedType.IsGenericType &&
             namedType.TypeArguments.Length == 1 &&
