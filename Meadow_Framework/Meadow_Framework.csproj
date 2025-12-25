@@ -98,7 +98,8 @@
     <!-- Ensure analyzer builds before packing -->
     <!-- ========================================= -->
     <Target Name="BuildAnalyzer"
-            BeforeTargets="Pack">
+            BeforeTargets="Pack"
+            Condition="'$(NoBuild)' != 'true'">
         <MSBuild Projects="..\Meadow_Framework.Analyzer\Meadow_Framework.Analyzer.csproj"
                  Targets="Build"
                  Properties="Configuration=$(Configuration)" />
