@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using MassTransit.Serialization;
 using Meadow_Framework.Abstractions.Commands;
 using Meadow_Framework.Abstractions.Dispatchers;
 using Meadow_Framework.Abstractions.Events;
@@ -17,6 +18,10 @@ using Meadow_Framework.Infrastructure.Seed;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Quartz;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json.Serialization.Metadata;
+using Meadow_Framework.Infrastructure.Security;
 
 namespace Meadow_Framework.Infrastructure;
 
@@ -217,6 +222,7 @@ public static class Extensions
         IConfiguration configuration, IEnumerable<Assembly> assemblies)
     {
         var config = configuration.GetSection("AppConfiguration:RabbitMQ").Get<RabbitMqOptions>();
+        var encryptionKey = configuration["AppConfiguration:RabbitMQ:EncryptionKey"];
 
         // Add the required Quartz.NET services
         services.AddQuartz(q =>
@@ -228,10 +234,10 @@ public static class Extensions
 
         services.AddMassTransit(configurator =>
         {
-            var eventConsumer = FindConsumers(assemblies).ToList(); // Find all event consumers
+            var consumers = FindConsumers(assemblies).ToList();
 
-            foreach (var consumer in eventConsumer)
-                configurator.AddConsumer(consumer); // Register each consumer
+            foreach (var consumer in consumers)
+                configurator.AddConsumer(consumer);
 
             configurator.UsingRabbitMq((context, cfg) =>
             {
@@ -241,11 +247,47 @@ public static class Extensions
                     h.Password(config.Password);
                 });
 
-                // Register each EventConsumer with a receive endpoint
-                foreach (var type in eventConsumer)
-                    cfg.ReceiveEndpoint($"{type.FullName}", c => { c.ConfigureConsumer(context, type); });
+                // Configure message encryption if a key is provided
+                if (!string.IsNullOrWhiteSpace(encryptionKey))
+                {
+                    using var sha = SHA256.Create();
+                    var encryptionKeyBytes = sha.ComputeHash(
+                        Encoding.UTF8.GetBytes(encryptionKey)
+                    );
+
+                    cfg.ConfigureJsonSerializerOptions(options =>
+                    {
+                        options.TypeInfoResolver ??= new DefaultJsonTypeInfoResolver();
+
+                        options.TypeInfoResolver = options.TypeInfoResolver.WithAddedModifier(typeInfo =>
+                        {
+                            foreach (var property in typeInfo.Properties)
+                            {
+                                if (property.PropertyType == typeof(string) &&
+                                    property.AttributeProvider?.IsDefined(
+                                        typeof(SensitiveDataAttribute), inherit: false) == true)
+                                {
+                                    property.CustomConverter =
+                                        new EncryptedStringConverter(encryptionKeyBytes);
+                                }
+                            }
+                        });
+
+                        return options;
+                    });
+                }
+
+                // Configure receive endpoints
+                foreach (var consumerType in consumers)
+                {
+                    cfg.ReceiveEndpoint(consumerType.Name, endpoint =>
+                    {
+                        endpoint.ConfigureConsumer(context, consumerType);
+                    });
+                }
             });
         });
+
 
         return services;
     }
