@@ -261,7 +261,7 @@ public static class Extensions
                 h.Password(config.Password);
             });
 
-            ConfigureRabbitMqSensitiveData(encryptionKey, cfg);
+            ConfigureRabbitMqSensitiveData(cfg);
 
             // Configure receive endpoints
             foreach (Type consumerType in consumers)
@@ -274,32 +274,33 @@ public static class Extensions
         });
     }
 
-    private static void ConfigureRabbitMqSensitiveData(string? encryptionKey, IRabbitMqBusFactoryConfigurator cfg)
+    private static void ConfigureRabbitMqSensitiveData(IRabbitMqBusFactoryConfigurator cfg)
     {
-        // Configure message encryption if a key is provided
-        if (!string.IsNullOrWhiteSpace(encryptionKey))
+        cfg.ConfigureJsonSerializerOptions(options =>
         {
-            byte[] encryptionKeyBytes = SHA256.HashData(Encoding.UTF8.GetBytes(encryptionKey));
+            var resolver = options.TypeInfoResolver
+                           ?? new DefaultJsonTypeInfoResolver();
 
-            cfg.ConfigureJsonSerializerOptions(options =>
+            options.TypeInfoResolver = resolver.WithAddedModifier(typeInfo =>
             {
-                options.TypeInfoResolver ??= new DefaultJsonTypeInfoResolver();
-
-                options.TypeInfoResolver = options.TypeInfoResolver.WithAddedModifier(typeInfo =>
+                foreach (var property in typeInfo.Properties)
                 {
-                    foreach (var property in typeInfo.Properties)
+                    if (property.AttributeProvider?
+                            .IsDefined(typeof(SensitiveDataAttribute), inherit: false) == true)
                     {
-                        if (property.PropertyType == typeof(string)
-                            && property.AttributeProvider?.IsDefined(typeof(SensitiveDataAttribute), inherit: false) == true)
-                        {
-                            property.CustomConverter = new EncryptedStringConverter(encryptionKeyBytes);
-                        }
-                    }
-                });
+                        var attribute = (SensitiveDataAttribute)
+                            property.AttributeProvider!
+                                .GetCustomAttributes(typeof(SensitiveDataAttribute), false)
+                                .First();
 
-                return options;
+                        property.CustomConverter =
+                            new MaskedStringJsonConverter(attribute.Mask);
+                    }
+                }
             });
-        }
+
+            return options;
+        });
     }
 
     /// <summary>
