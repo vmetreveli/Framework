@@ -17,7 +17,6 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <LangVersion>13</LangVersion>
         <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
-        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     </PropertyGroup>
     <ItemGroup>
         <!-- ASP.NET Core shared framework -->
@@ -25,8 +24,6 @@
 
         <!-- Core utilities -->
         <PackageReference Include="Humanizer.Core" Version="3.0.1" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="RestEase" Version="1.6.4" />
 
@@ -71,6 +68,13 @@
 
     <ItemGroup>
         <None Include="4518763_framework_phoenix_icon.png" Pack="True" PackagePath="" />
+    </ItemGroup>
+    <ItemGroup>
+        <!-- analyzer part -->
+        <ProjectReference Include="..\Meadow_Framework.Analyzers\Meadow_Framework.Analyzers.csproj"
+                          PrivateAssets="none"
+                          ReferenceOutputAssembly="false"
+                          OutputItemType="Analyzer" />
     </ItemGroup>
     <Target Name="PrepareReleaseNotes" BeforeTargets="GenerateNuspec">
         <PropertyGroup>

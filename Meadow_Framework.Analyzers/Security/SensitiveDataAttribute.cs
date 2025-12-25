@@ -3,7 +3,7 @@ namespace Meadow_Framework.Infrastructure.Security;
 /// <summary>
 ///
 /// </summary>
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+[AttributeUsage(AttributeTargets.Class |AttributeTargets.Property | AttributeTargets.Parameter)]
 public sealed class SensitiveDataAttribute : Attribute
 {
     public string Mask { get; }
