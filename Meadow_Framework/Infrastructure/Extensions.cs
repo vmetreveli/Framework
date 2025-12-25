@@ -68,6 +68,12 @@ public static class Extensions
 
         return services;
     }
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="app"></param>
+    /// <typeparam name="TContext"></typeparam>
+    /// <returns></returns>
     public static IApplicationBuilder UseMigration<TContext>(this IApplicationBuilder app)
         where TContext : DbContext
     {
@@ -107,8 +113,8 @@ public static class Extensions
         services.AddScoped<ICommandDispatcher, CommandDispatcher>();
 
         // Get all types that implement ICommandHandler<>
-        var commandHandlerTypes = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
+        IEnumerable<Type> commandHandlerTypes = assembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.GetInterfaces()
                 .Any(i => i.IsGenericType
                           && (i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)
                               || i.GetGenericTypeDefinition() == typeof(ICommandHandler<>))));
@@ -140,17 +146,17 @@ public static class Extensions
         services.AddScoped<IQueryDispatcher, QueryDispatcher>();
 
         // Get all types implementing IQueryHandler<,>
-        var queryHandlerTypes = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
+        IEnumerable<Type> queryHandlerTypes = assembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IQueryHandler<,>)));
 
         // Register each query handler as scoped
-        foreach (var type in queryHandlerTypes)
+        foreach (Type type in queryHandlerTypes)
         {
             var interfaces = type.GetInterfaces()
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IQueryHandler<,>));
 
-            foreach (var interfaceType in interfaces) services.AddScoped(interfaceType, type);
+            foreach (Type interfaceType in interfaces) services.AddScoped(interfaceType, type);
         }
 
         return services;
@@ -169,16 +175,16 @@ public static class Extensions
 
         // Get all types implementing IEventHandler<>
         var eventHandlerTypes = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEventHandler<>)));
 
         // Register each event handler as scoped
-        foreach (var type in eventHandlerTypes)
+        foreach (Type type in eventHandlerTypes)
         {
             var interfaces = type.GetInterfaces()
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEventHandler<>));
 
-            foreach (var interfaceType in interfaces) services.AddScoped(interfaceType, type);
+            foreach (Type interfaceType in interfaces) services.AddScoped(interfaceType, type);
         }
 
         return services;
@@ -218,8 +224,7 @@ public static class Extensions
     /// <param name="configuration">The configuration object for RabbitMQ and Quartz settings.</param>
     /// <param name="assemblies">The assemblies to scan for consumers.</param>
     /// <returns>The modified <see cref="IServiceCollection" />.</returns>
-    private static IServiceCollection AddEventBus(this IServiceCollection services,
-        IConfiguration configuration, IEnumerable<Assembly> assemblies)
+    private static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration, IEnumerable<Assembly> assemblies)
     {
         var config = configuration.GetSection("AppConfiguration:RabbitMQ").Get<RabbitMqOptions>();
         var encryptionKey = configuration["AppConfiguration:RabbitMQ:EncryptionKey"];
@@ -239,57 +244,62 @@ public static class Extensions
             foreach (var consumer in consumers)
                 configurator.AddConsumer(consumer);
 
-            configurator.UsingRabbitMq((context, cfg) =>
-            {
-                cfg.Host(config!.Host, h =>
-                {
-                    h.Username(config.UserName);
-                    h.Password(config.Password);
-                });
-
-                // Configure message encryption if a key is provided
-                if (!string.IsNullOrWhiteSpace(encryptionKey))
-                {
-                    using var sha = SHA256.Create();
-                    var encryptionKeyBytes = sha.ComputeHash(
-                        Encoding.UTF8.GetBytes(encryptionKey)
-                    );
-
-                    cfg.ConfigureJsonSerializerOptions(options =>
-                    {
-                        options.TypeInfoResolver ??= new DefaultJsonTypeInfoResolver();
-
-                        options.TypeInfoResolver = options.TypeInfoResolver.WithAddedModifier(typeInfo =>
-                        {
-                            foreach (var property in typeInfo.Properties)
-                            {
-                                if (property.PropertyType == typeof(string) &&
-                                    property.AttributeProvider?.IsDefined(
-                                        typeof(SensitiveDataAttribute), inherit: false) == true)
-                                {
-                                    property.CustomConverter =
-                                        new EncryptedStringConverter(encryptionKeyBytes);
-                                }
-                            }
-                        });
-
-                        return options;
-                    });
-                }
-
-                // Configure receive endpoints
-                foreach (var consumerType in consumers)
-                {
-                    cfg.ReceiveEndpoint(consumerType.Name, endpoint =>
-                    {
-                        endpoint.ConfigureConsumer(context, consumerType);
-                    });
-                }
-            });
+            ConfigureRabbitMq(configurator, config, encryptionKey, consumers);
         });
 
 
         return services;
+    }
+
+    private static void ConfigureRabbitMq(IBusRegistrationConfigurator configurator, RabbitMqOptions? config, string? encryptionKey, List<Type> consumers)
+    {
+        configurator.UsingRabbitMq((context, cfg) =>
+        {
+            cfg.Host(config!.Host, h =>
+            {
+                h.Username(config.UserName);
+                h.Password(config.Password);
+            });
+
+            ConfigureRabbitMqSensitiveData(encryptionKey, cfg);
+
+            // Configure receive endpoints
+            foreach (Type consumerType in consumers)
+            {
+                cfg.ReceiveEndpoint(consumerType.Name, endpoint =>
+                {
+                    endpoint.ConfigureConsumer(context, consumerType);
+                });
+            }
+        });
+    }
+
+    private static void ConfigureRabbitMqSensitiveData(string? encryptionKey, IRabbitMqBusFactoryConfigurator cfg)
+    {
+        // Configure message encryption if a key is provided
+        if (!string.IsNullOrWhiteSpace(encryptionKey))
+        {
+            byte[] encryptionKeyBytes = SHA256.HashData(Encoding.UTF8.GetBytes(encryptionKey));
+
+            cfg.ConfigureJsonSerializerOptions(options =>
+            {
+                options.TypeInfoResolver ??= new DefaultJsonTypeInfoResolver();
+
+                options.TypeInfoResolver = options.TypeInfoResolver.WithAddedModifier(typeInfo =>
+                {
+                    foreach (var property in typeInfo.Properties)
+                    {
+                        if (property.PropertyType == typeof(string)
+                            && property.AttributeProvider?.IsDefined(typeof(SensitiveDataAttribute), inherit: false) == true)
+                        {
+                            property.CustomConverter = new EncryptedStringConverter(encryptionKeyBytes);
+                        }
+                    }
+                });
+
+                return options;
+            });
+        }
     }
 
     /// <summary>
@@ -305,7 +315,7 @@ public static class Extensions
         // Search for classes implementing IEventConsumer<> in loaded assemblies
         foreach (var assembly in assemblies)
             consumer.AddRange(assembly.GetTypes()
-                .Where(type => type.IsClass && !type.IsAbstract)
+                .Where(type => type is { IsClass: true, IsAbstract: false })
                 .Where(type => type.GetInterfaces()
                     .ToList()
                     .Exists(interfaceType =>
