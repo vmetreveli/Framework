@@ -97,6 +97,9 @@
     <!-- ========================================= -->
     <!-- Ensure analyzer builds before packing -->
     <!-- ========================================= -->
+    <ItemGroup>
+        <None Remove="bin\$(Configuration)\net9.0\*.runtimeconfig.json" />
+    </ItemGroup>
     <Target Name="BuildAnalyzer"
             BeforeTargets="Pack"
             Condition="'$(NoBuild)' != 'true'">

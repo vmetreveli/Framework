@@ -31,16 +31,15 @@ public sealed class SensitiveDataPropertyAnalyzer : DiagnosticAnalyzer
         ImmutableHashSet.Create(
             StringComparer.OrdinalIgnoreCase,
             "Name",
-            "email",
-            "password",
-            "phone",
-            "address");
+            "Email",
+            "Password",
+            "Phone",
+            "Address");
 
     /// <summary>
     ///
     /// </summary>
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        ImmutableArray.Create(Rule);
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [Rule];
 
     /// <summary>
     ///

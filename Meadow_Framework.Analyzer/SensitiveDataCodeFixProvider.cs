@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -18,6 +17,9 @@ namespace Meadow_Framework.Analyzer;
 [Shared]
 public sealed class SensitiveDataCodeFixProvider : CodeFixProvider
 {
+    /// <summary>
+    ///
+    /// </summary>
     public override ImmutableArray<string> FixableDiagnosticIds =>
         ImmutableArray.Create(SensitiveDataPropertyAnalyzer.DiagnosticId);
 
@@ -35,9 +37,8 @@ public sealed class SensitiveDataCodeFixProvider : CodeFixProvider
     {
         var diagnostic = context.Diagnostics.Single();
         var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
-        if (root == null) return;
 
-        var node = root.FindNode(diagnostic.Location.SourceSpan);
+        var node = root?.FindNode(diagnostic.Location.SourceSpan);
 
         if (node is not PropertyDeclarationSyntax property)
             return;
@@ -45,7 +46,7 @@ public sealed class SensitiveDataCodeFixProvider : CodeFixProvider
         context.RegisterCodeFix(
             CodeAction.Create(
                 "Add [SensitiveData]",
-                c => AddAttributeAsync(context.Document, root, property, c),
+                c => AddAttributeAsync(context.Document, root!, property),
                 nameof(SensitiveDataCodeFixProvider)),
             diagnostic);
     }
@@ -53,8 +54,7 @@ public sealed class SensitiveDataCodeFixProvider : CodeFixProvider
     private static Task<Document> AddAttributeAsync(
         Document document,
         SyntaxNode root,
-        PropertyDeclarationSyntax property,
-        CancellationToken cancellationToken)
+        PropertyDeclarationSyntax property)
     {
         var attribute =
             SyntaxFactory.Attribute(SyntaxFactory.IdentifierName("SensitiveData"));

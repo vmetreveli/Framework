@@ -21,6 +21,7 @@ using Quartz;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization.Metadata;
+using Meadow_Framework.Infrastructure.Security;
 
 namespace Meadow_Framework.Infrastructure;
 
@@ -275,31 +276,31 @@ public static class Extensions
 
     private static void ConfigureRabbitMqSensitiveData(IRabbitMqBusFactoryConfigurator cfg)
     {
-        //  cfg.ConfigureJsonSerializerOptions(options =>
-        //  {
-        //      var resolver = options.TypeInfoResolver
-        //                     ?? new DefaultJsonTypeInfoResolver();
-        //
-        //      options.TypeInfoResolver = resolver.WithAddedModifier(typeInfo =>
-        //      {
-        //          foreach (var property in typeInfo.Properties)
-        //          {
-        //              if (property.AttributeProvider?
-        //                      .IsDefined(typeof(SensitiveDataAttribute), inherit: false) == true)
-        //              {
-        //                  var attribute = (SensitiveDataAttribute)
-        //                      property.AttributeProvider!
-        //                          .GetCustomAttributes(typeof(SensitiveDataAttribute), false)
-        //                          .First();
-        //
-        //                  property.CustomConverter =
-        //                      new MaskedStringJsonConverter(attribute.Mask);
-        //              }
-        //          }
-        //      });
-        //
-        //     return options;
-        // });
+         cfg.ConfigureJsonSerializerOptions(options =>
+         {
+             var resolver = options.TypeInfoResolver
+                            ?? new DefaultJsonTypeInfoResolver();
+
+             options.TypeInfoResolver = resolver.WithAddedModifier(typeInfo =>
+             {
+                 foreach (var property in typeInfo.Properties)
+                 {
+                     if (property.AttributeProvider?
+                             .IsDefined(typeof(SensitiveDataAttribute), inherit: false) == true)
+                     {
+                         SensitiveDataAttribute attribute = (SensitiveDataAttribute)
+                             property.AttributeProvider!
+                                 .GetCustomAttributes(typeof(SensitiveDataAttribute), false)
+                                 .FirstOrDefault()!;
+
+                         property.CustomConverter =
+                             new MaskedStringJsonConverter(attribute.Mask);
+                     }
+                 }
+             });
+
+            return options;
+        });
     }
 
     /// <summary>

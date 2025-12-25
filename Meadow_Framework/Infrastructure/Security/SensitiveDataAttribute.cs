@@ -6,4 +6,17 @@ namespace Meadow_Framework.Infrastructure.Security;
 [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Field)]
 public sealed class SensitiveDataAttribute : Attribute
 {
+    /// <summary>
+    ///
+    /// </summary>
+    public string Mask { get; }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="mask"></param>
+    public SensitiveDataAttribute(string mask = "****")
+    {
+        Mask = mask;
+    }
 }
