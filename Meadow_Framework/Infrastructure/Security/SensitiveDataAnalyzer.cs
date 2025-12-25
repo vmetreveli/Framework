@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Meadow_Framework.Abstractions.Primitives;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -39,7 +40,7 @@ public class SensitiveDataAnalyzer : DiagnosticAnalyzer
 
         // Only properties inside IntegrationBaseEvent subclasses
         var containingClass = property.ContainingType;
-        if (!containingClass.BaseType?.Name.EndsWith("IntegrationBaseEvent") ?? true)
+        if (!containingClass.BaseType?.Name.EndsWith("IntegrationEvent") ?? true)
             return;
 
         // Heuristic: property names that are likely sensitive
