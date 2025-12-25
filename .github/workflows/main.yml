@@ -32,51 +32,7 @@ jobs:
           fetch-depth: 0
 
       - name: Log start
-        run: |
-          echo "[CI/CD] Workflow started on ref: $GITHUB_REF"
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Install semantic-release
-        run: |
-          npm install --no-save \
-            semantic-release \
-            @semantic-release/commit-analyzer \
-            @semantic-release/release-notes-generator \
-            @semantic-release/github \
-            @semantic-release/exec
-
-      - name: Determine VERSION
-        id: version
-        run: |
-          set -e
-          echo "[CI/CD] Determining version..."
-
-          VERSION=$(npx semantic-release --branches master --dry-run --ci 2>/dev/null \
-            | grep "Next release version" | awk '{print $4}' || true)
-
-          if [[ -z "$VERSION" ]]; then
-            LATEST_TAG=$(git tag --sort=-creatordate \
-              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
-              | head -n1 || echo "v0.0.0")
-
-            IFS='.' read -r MAJOR MINOR PATCH <<< "${LATEST_TAG#v}"
-            VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
-          fi
-
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "[CI/CD] VERSION=$VERSION"
-
-      - name: Create Git tag
-        if: "!startsWith(github.ref, 'refs/tags/')"
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v${VERSION}" -m "Release v${VERSION}"
-          git push origin "v${VERSION}"
+        run: echo "[CI/CD] Workflow started on ref: $GITHUB_REF"
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -107,9 +63,15 @@ jobs:
           mkdir -p ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
           dotnet pack ${{ env.PROJECT_PATH }} \
             --configuration Release \
-            --no-build \
             --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }} \
             /p:Version=${{ env.VERSION }}
+
+      - name: List package contents (optional, debug)
+        run: |
+          for f in ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg; do
+            echo "Contents of $f:"
+            unzip -l "$f"
+          done
 
       - name: Authenticate GitHub Packages
         run: |
@@ -121,16 +83,6 @@ jobs:
             --name github \
             ${{ env.GITHUB_NUGET_SOURCE }}
 
-      # ---------------- DORA: start deployment after tag creation ----------------
-      - name: Start deployment (DORA)
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: bobheadxi/deployments@v1
-        with:
-          step: start
-          token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.ref }}
-      # ---------------------------------------------------------------------------
-
       - name: Publish to GitHub Packages
         run: |
           dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}/*.nupkg \
@@ -138,7 +90,14 @@ jobs:
             --api-key ${{ secrets.GITHUB_TOKEN }} \
             --skip-duplicate
 
-      # ---------------- DORA: finish deployment SUCCESS ----------------
+      - name: Start deployment (DORA)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: bobheadxi/deployments@v1
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.ref }}
+
       - name: Finish deployment (success)
         if: success() && startsWith(github.ref, 'refs/tags/')
         uses: bobheadxi/deployments@v1
@@ -147,9 +106,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: success
           ref: ${{ github.ref }}
-      # -------------------------------------------------------------------
 
-      # ---------------- DORA: finish deployment FAILURE ----------------
       - name: Finish deployment (failure)
         if: failure() && startsWith(github.ref, 'refs/tags/')
         uses: bobheadxi/deployments@v1
@@ -158,4 +115,3 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           status: failure
           ref: ${{ github.ref }}
-      # -------------------------------------------------------------------

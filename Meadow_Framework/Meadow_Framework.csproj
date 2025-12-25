@@ -67,42 +67,35 @@
     </ItemGroup>
 
 
-    <!-- ========================================= -->
-    <!-- Analyzer reference (compile-time only) -->
-    <!-- ========================================= -->
+
+    <!-- Analyzer project reference (compile-time only) -->
     <ItemGroup>
         <ProjectReference Include="..\Meadow_Framework.Analyzer\Meadow_Framework.Analyzer.csproj"
                           ReferenceOutputAssembly="false"
                           OutputItemType="Analyzer" />
     </ItemGroup>
 
-    <!-- ========================================= -->
     <!-- Pack analyzer DLL into NuGet -->
-    <!-- ========================================= -->
     <ItemGroup>
-        <Analyzer Include="$(MSBuildProjectDirectory)/../Meadow_Framework.Analyzer/bin/$(Configuration)/netstandard2.0/Meadow_Framework.Analyzer.dll"
+        <Analyzer Include="..\Meadow_Framework.Analyzer\bin\$(Configuration)\netstandard2.0\Meadow_Framework.Analyzer.dll"
                   Pack="true"
                   PackagePath="analyzers/dotnet/cs" />
     </ItemGroup>
 
-    <!-- ========================================= -->
     <!-- Package icon -->
-    <!-- ========================================= -->
     <ItemGroup>
         <None Include="4518763_framework_phoenix_icon.png"
               Pack="true"
               PackagePath="" />
     </ItemGroup>
 
-    <!-- ========================================= -->
-    <!-- Ensure analyzer builds before packing -->
-    <!-- ========================================= -->
+    <!-- Remove unnecessary runtimeconfig.json to avoid NU5026 -->
     <ItemGroup>
         <None Remove="bin\$(Configuration)\net9.0\*.runtimeconfig.json" />
     </ItemGroup>
-    <Target Name="BuildAnalyzer"
-            BeforeTargets="Pack"
-            Condition="'$(NoBuild)' != 'true'">
+
+    <!-- Ensure analyzer builds before packing (always) -->
+    <Target Name="BuildAnalyzer" BeforeTargets="Pack">
         <MSBuild Projects="..\Meadow_Framework.Analyzer\Meadow_Framework.Analyzer.csproj"
                  Targets="Build"
                  Properties="Configuration=$(Configuration)" />
