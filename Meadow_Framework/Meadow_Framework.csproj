@@ -24,7 +24,12 @@
 
         <!-- Core utilities -->
         <PackageReference Include="Humanizer.Core" Version="3.0.1" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="RestEase" Version="1.6.4" />
 
         <!-- Entity Framework Core -->
@@ -50,20 +55,29 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.11" />
 
         <!-- Scheduling -->
-        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1" />
+        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.15.1" />
 
         <!-- Mapping & Validation -->
-        <PackageReference Include="FluentValidation" Version="11.11.0" />
+        <PackageReference Include="FluentValidation" Version="12.1.1" />
 
         <!-- Messaging (MassTransit – v8 only) -->
-        <PackageReference Include="MassTransit" Version="7.3.1" />
+        <PackageReference Include="MassTransit" Version="8.5.7" />
         <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
         <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
-        <PackageReference Include="MassTransit.RabbitMQ" Version="7.3.1" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.7" />
+        <PackageReference Update="MinVer" Version="6.0.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
         <None Include="4518763_framework_phoenix_icon.png" Pack="True" PackagePath="" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
+      <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
     </ItemGroup>
     <Target Name="PrepareReleaseNotes" BeforeTargets="GenerateNuspec">
         <PropertyGroup>

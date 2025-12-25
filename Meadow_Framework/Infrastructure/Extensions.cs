@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using MassTransit.Serialization;
 using Meadow_Framework.Abstractions.Commands;
 using Meadow_Framework.Abstractions.Dispatchers;
 using Meadow_Framework.Abstractions.Events;
@@ -17,6 +18,10 @@ using Meadow_Framework.Infrastructure.Seed;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Quartz;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json.Serialization.Metadata;
+using Meadow_Framework.Infrastructure.Security;
 
 namespace Meadow_Framework.Infrastructure;
 
@@ -63,6 +68,12 @@ public static class Extensions
 
         return services;
     }
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="app"></param>
+    /// <typeparam name="TContext"></typeparam>
+    /// <returns></returns>
     public static IApplicationBuilder UseMigration<TContext>(this IApplicationBuilder app)
         where TContext : DbContext
     {
@@ -102,8 +113,8 @@ public static class Extensions
         services.AddScoped<ICommandDispatcher, CommandDispatcher>();
 
         // Get all types that implement ICommandHandler<>
-        var commandHandlerTypes = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
+        IEnumerable<Type> commandHandlerTypes = assembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.GetInterfaces()
                 .Any(i => i.IsGenericType
                           && (i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)
                               || i.GetGenericTypeDefinition() == typeof(ICommandHandler<>))));
@@ -135,17 +146,17 @@ public static class Extensions
         services.AddScoped<IQueryDispatcher, QueryDispatcher>();
 
         // Get all types implementing IQueryHandler<,>
-        var queryHandlerTypes = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
+        IEnumerable<Type> queryHandlerTypes = assembly.GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IQueryHandler<,>)));
 
         // Register each query handler as scoped
-        foreach (var type in queryHandlerTypes)
+        foreach (Type type in queryHandlerTypes)
         {
             var interfaces = type.GetInterfaces()
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IQueryHandler<,>));
 
-            foreach (var interfaceType in interfaces) services.AddScoped(interfaceType, type);
+            foreach (Type interfaceType in interfaces) services.AddScoped(interfaceType, type);
         }
 
         return services;
@@ -164,16 +175,16 @@ public static class Extensions
 
         // Get all types implementing IEventHandler<>
         var eventHandlerTypes = assembly.GetTypes()
-            .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces()
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEventHandler<>)));
 
         // Register each event handler as scoped
-        foreach (var type in eventHandlerTypes)
+        foreach (Type type in eventHandlerTypes)
         {
             var interfaces = type.GetInterfaces()
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEventHandler<>));
 
-            foreach (var interfaceType in interfaces) services.AddScoped(interfaceType, type);
+            foreach (Type interfaceType in interfaces) services.AddScoped(interfaceType, type);
         }
 
         return services;
@@ -213,10 +224,10 @@ public static class Extensions
     /// <param name="configuration">The configuration object for RabbitMQ and Quartz settings.</param>
     /// <param name="assemblies">The assemblies to scan for consumers.</param>
     /// <returns>The modified <see cref="IServiceCollection" />.</returns>
-    private static IServiceCollection AddEventBus(this IServiceCollection services,
-        IConfiguration configuration, IEnumerable<Assembly> assemblies)
+    private static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration, IEnumerable<Assembly> assemblies)
     {
         var config = configuration.GetSection("AppConfiguration:RabbitMQ").Get<RabbitMqOptions>();
+        var encryptionKey = configuration["AppConfiguration:RabbitMQ:EncryptionKey"];
 
         // Add the required Quartz.NET services
         services.AddQuartz(q =>
@@ -228,26 +239,68 @@ public static class Extensions
 
         services.AddMassTransit(configurator =>
         {
-            var eventConsumer = FindConsumers(assemblies).ToList(); // Find all event consumers
+            var consumers = FindConsumers(assemblies).ToList();
 
-            foreach (var consumer in eventConsumer)
-                configurator.AddConsumer(consumer); // Register each consumer
+            foreach (var consumer in consumers)
+                configurator.AddConsumer(consumer);
 
-            configurator.UsingRabbitMq((context, cfg) =>
-            {
-                cfg.Host(config!.Host, h =>
-                {
-                    h.Username(config.UserName);
-                    h.Password(config.Password);
-                });
-
-                // Register each EventConsumer with a receive endpoint
-                foreach (var type in eventConsumer)
-                    cfg.ReceiveEndpoint($"{type.FullName}", c => { c.ConfigureConsumer(context, type); });
-            });
+            ConfigureRabbitMq(configurator, config, encryptionKey, consumers);
         });
 
+
         return services;
+    }
+
+    private static void ConfigureRabbitMq(IBusRegistrationConfigurator configurator, RabbitMqOptions? config, string? encryptionKey, List<Type> consumers)
+    {
+        configurator.UsingRabbitMq((context, cfg) =>
+        {
+            cfg.Host(config!.Host, h =>
+            {
+                h.Username(config.UserName);
+                h.Password(config.Password);
+            });
+
+            ConfigureRabbitMqSensitiveData(cfg);
+
+            // Configure receive endpoints
+            foreach (Type consumerType in consumers)
+            {
+                cfg.ReceiveEndpoint(consumerType.Name, endpoint =>
+                {
+                    endpoint.ConfigureConsumer(context, consumerType);
+                });
+            }
+        });
+    }
+
+    private static void ConfigureRabbitMqSensitiveData(IRabbitMqBusFactoryConfigurator cfg)
+    {
+        cfg.ConfigureJsonSerializerOptions(options =>
+        {
+            var resolver = options.TypeInfoResolver
+                           ?? new DefaultJsonTypeInfoResolver();
+
+            options.TypeInfoResolver = resolver.WithAddedModifier(typeInfo =>
+            {
+                foreach (var property in typeInfo.Properties)
+                {
+                    if (property.AttributeProvider?
+                            .IsDefined(typeof(SensitiveDataAttribute), inherit: false) == true)
+                    {
+                        var attribute = (SensitiveDataAttribute)
+                            property.AttributeProvider!
+                                .GetCustomAttributes(typeof(SensitiveDataAttribute), false)
+                                .First();
+
+                        property.CustomConverter =
+                            new MaskedStringJsonConverter(attribute.Mask);
+                    }
+                }
+            });
+
+            return options;
+        });
     }
 
     /// <summary>
@@ -263,7 +316,7 @@ public static class Extensions
         // Search for classes implementing IEventConsumer<> in loaded assemblies
         foreach (var assembly in assemblies)
             consumer.AddRange(assembly.GetTypes()
-                .Where(type => type.IsClass && !type.IsAbstract)
+                .Where(type => type is { IsClass: true, IsAbstract: false })
                 .Where(type => type.GetInterfaces()
                     .ToList()
                     .Exists(interfaceType =>
