@@ -8,6 +8,7 @@
         <Nullable>enable</Nullable>
         <PackageType>Analyzer</PackageType>
         <IsPackable>true</IsPackable>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
 
@@ -24,5 +25,13 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+    <ItemGroup>
+        <Analyzer Include="$(OutputPath)\Meadow_Framework.Analyzer.dll" />
+    </ItemGroup>
 
+    <ItemGroup>
+        <None Include="$(OutputPath)\Meadow_Framework.Analyzer.dll"
+              Pack="true"
+              PackagePath="analyzers/dotnet/cs" />
+    </ItemGroup>
 </Project>
