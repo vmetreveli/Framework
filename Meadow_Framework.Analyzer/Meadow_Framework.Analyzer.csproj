@@ -29,7 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="$(OutputPath)\Meadow_Framework.Analyzer.dll"
+        <None Include="$(OutputPath)/Meadow_Framework.Analyzer.dll"
               Pack="true"
               PackagePath="analyzers/dotnet/cs" />
     </ItemGroup>
