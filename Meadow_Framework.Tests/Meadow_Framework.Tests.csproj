@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Meadow_Framework\Meadow_Framework.csproj" />
+    <ProjectReference Include="..\Meadow_Framework.Core\Meadow_Framework.Core.csproj" />
   </ItemGroup>
 
 </Project>

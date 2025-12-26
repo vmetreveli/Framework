@@ -1,10 +1,10 @@
 using FluentAssertions;
 using MassTransit;
-using Meadow_Framework.Abstractions.Events;
-using Meadow_Framework.Abstractions.Outbox;
-using Meadow_Framework.Abstractions.Primitives;
-using Meadow_Framework.Abstractions.Repository;
-using Meadow_Framework.Infrastructure.Events;
+using Meadow_Framework.Core.Abstractions.Events;
+using Meadow_Framework.Core.Abstractions.Outbox;
+using Meadow_Framework.Core.Abstractions.Primitives;
+using Meadow_Framework.Core.Abstractions.Repository;
+using Meadow_Framework.Core.Infrastructure.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;

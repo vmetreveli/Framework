@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_PATH: Meadow_Framework/Meadow_Framework.csproj
+  PROJECT_PATH: Meadow_Framework.Core/Meadow_Framework.Core.csproj
   PROJECT_ANALYZER_PATH: Meadow_Framework/Meadow_Framework.Analyzer.csproj
   TEST_PROJECT_PATH: Meadow_Framework.Tests/Meadow_Framework.Tests.csproj
   PACKAGE_OUTPUT_DIRECTORY: output

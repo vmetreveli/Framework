@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow_Framework", "Meadow_Framework\Meadow_Framework.csproj", "{877021D8-66D6-4800-AB61-CC87D6BD0C34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow_Framework.Core", "Meadow_Framework.Core\Meadow_Framework.Core.csproj", "{877021D8-66D6-4800-AB61-CC87D6BD0C34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow_Framework.Tests", "Meadow_Framework.Tests\Meadow_Framework.Tests.csproj", "{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}"
 EndProject
