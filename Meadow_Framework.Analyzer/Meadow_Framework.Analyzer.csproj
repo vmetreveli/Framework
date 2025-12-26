@@ -6,6 +6,8 @@
         <PackAsAnalyzer>true</PackAsAnalyzer>
         <LangVersion>14</LangVersion>
         <Nullable>enable</Nullable>
+        <PackageType>Analyzer</PackageType>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
 
