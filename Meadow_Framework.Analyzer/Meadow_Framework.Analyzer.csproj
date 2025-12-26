@@ -3,10 +3,11 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <IsRoslynComponent>true</IsRoslynComponent>
-        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-        <LangVersion>13</LangVersion>
+        <PackAsAnalyzer>true</PackAsAnalyzer>
+        <LangVersion>14</LangVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+
 
     <ItemGroup>
         <!-- Analyzer APIs -->
@@ -16,6 +17,10 @@
         <!-- CodeFix / Workspaces APIs -->
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0" PrivateAssets="all" />
         <PackageReference Include="System.Composition" Version="9.0.11" PrivateAssets="all" />
+        <PackageReference Update="MinVer" Version="6.0.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@
         <Description>Common framework abstractions and infrastructure for Meadow projects.</Description>
         <PackageTags>framework;meadow;library</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <LangVersion>13</LangVersion>
+        <LangVersion>14</LangVersion>
         <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
     </PropertyGroup>
     <ItemGroup>
@@ -70,35 +70,11 @@
 
     <!-- Analyzer project reference (compile-time only) -->
     <ItemGroup>
-        <ProjectReference Include="..\Meadow_Framework.Analyzer\Meadow_Framework.Analyzer.csproj"
-                          ReferenceOutputAssembly="false"
-                          OutputItemType="Analyzer" />
+        <None Include="4518763_framework_phoenix_icon.png" Pack="True" PackagePath="" />
     </ItemGroup>
-
-    <!-- Pack analyzer DLL into NuGet -->
     <ItemGroup>
-        <Analyzer Include="..\Meadow_Framework.Analyzer\bin\$(Configuration)\netstandard2.0\Meadow_Framework.Analyzer.dll"
-                  Pack="true"
-                  PackagePath="analyzers/dotnet/cs" />
+      <ProjectReference Include="..\Meadow_Framework.Analyzer\Meadow_Framework.Analyzer.csproj" />
     </ItemGroup>
 
-    <!-- Package icon -->
-    <ItemGroup>
-        <None Include="4518763_framework_phoenix_icon.png"
-              Pack="true"
-              PackagePath="" />
-    </ItemGroup>
-
-    <!-- Remove unnecessary runtimeconfig.json to avoid NU5026 -->
-    <ItemGroup>
-        <None Remove="bin\$(Configuration)\net9.0\*.runtimeconfig.json" />
-    </ItemGroup>
-
-    <!-- Ensure analyzer builds before packing (always) -->
-    <Target Name="BuildAnalyzer" BeforeTargets="Pack">
-        <MSBuild Projects="..\Meadow_Framework.Analyzer\Meadow_Framework.Analyzer.csproj"
-                 Targets="Build"
-                 Properties="Configuration=$(Configuration)" />
-    </Target>
 
 </Project>
