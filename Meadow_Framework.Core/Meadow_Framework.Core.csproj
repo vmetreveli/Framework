@@ -17,7 +17,7 @@
         <PackageTags>framework;meadow;library</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
 
-        <LangVersion>14</LangVersion>
+        <LangVersion>13</LangVersion>
         <PackageIcon>4518763_framework_phoenix_icon.png</PackageIcon>
         <IsPackable>true</IsPackable>
     </PropertyGroup>

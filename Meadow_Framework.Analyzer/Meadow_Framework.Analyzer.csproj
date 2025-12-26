@@ -4,7 +4,7 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <IsRoslynComponent>true</IsRoslynComponent>
         <PackAsAnalyzer>true</PackAsAnalyzer>
-        <LangVersion>14</LangVersion>
+        <LangVersion>13</LangVersion>
         <Nullable>enable</Nullable>
         <PackageType>Analyzer</PackageType>
         <IsPackable>true</IsPackable>
