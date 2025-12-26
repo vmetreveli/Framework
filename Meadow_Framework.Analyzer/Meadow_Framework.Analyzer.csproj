@@ -9,6 +9,8 @@
         <PackageType>Analyzer</PackageType>
         <IsPackable>true</IsPackable>
         <IncludeBuildOutput>false</IncludeBuildOutput>
+        <!-- Prevent lib/ref expectations -->
+        <NoPackageAnalysis>true</NoPackageAnalysis>
     </PropertyGroup>
 
 
