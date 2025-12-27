@@ -65,6 +65,7 @@ public static class Extensions
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();
             });
+        services.AddScoped<IUnitOfWork, UnitOfWork<BaseDbContext>>();
 
         return services;
     }
