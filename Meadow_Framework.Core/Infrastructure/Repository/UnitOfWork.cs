@@ -13,7 +13,7 @@ namespace Meadow_Framework.Core.Infrastructure.Repository;
 ///     made to the database context are committed or rolled back as a single unit of work.
 /// </summary>
 /// <typeparam name="TDbContext">The type of the DbContext that this unit of work manages.</typeparam>
-public sealed class UnitOfWork<TDbContext>(TDbContext context) : IUnitOfWork
+public class UnitOfWork<TDbContext>(TDbContext context) : IUnitOfWork
     where TDbContext : DbContext
 {
     /// <summary>
