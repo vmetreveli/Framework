@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -27,7 +28,7 @@ public sealed class SensitiveDataPropertyAnalyzer : DiagnosticAnalyzer
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
-    private static readonly ImmutableHashSet<string> SensitiveNames =
+    private static readonly ImmutableHashSet<string> DefaultSensitiveNames =
         ImmutableHashSet.Create(
             StringComparer.OrdinalIgnoreCase,
             "Name",
@@ -39,7 +40,8 @@ public sealed class SensitiveDataPropertyAnalyzer : DiagnosticAnalyzer
     /// <summary>
     ///
     /// </summary>
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [Rule];
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        => ImmutableArray.Create(Rule);
 
     /// <summary>
     ///
@@ -50,35 +52,63 @@ public sealed class SensitiveDataPropertyAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        context.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
+        context.RegisterCompilationStartAction(startContext =>
+        {
+            var sensitiveNames = GetSensitiveNames(startContext.Options);
+
+            startContext.RegisterSymbolAction(
+                ctx => AnalyzeProperty(ctx, sensitiveNames),
+                SymbolKind.Property);
+        });
     }
 
-    private static void AnalyzeProperty(SymbolAnalysisContext context)
+    private static void AnalyzeProperty(
+        SymbolAnalysisContext context,
+        ImmutableHashSet<string> sensitiveNames)
     {
         var property = (IPropertySymbol)context.Symbol;
 
-        // Only strings
+        // Only string properties
         if (property.Type.SpecialType != SpecialType.System_String)
             return;
 
         // Name heuristic
-        if (!SensitiveNames.Contains(property.Name))
+        if (!sensitiveNames.Contains(property.Name))
             return;
 
-        // Already has [SensitiveData]
+        // Already annotated
         if (HasSensitiveAttribute(property))
             return;
 
-        var diagnostic = Diagnostic.Create(
-            Rule,
-            property.Locations[0],
-            property.Name);
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                Rule,
+                property.Locations[0],
+                property.Name));
+    }
 
-        context.ReportDiagnostic(diagnostic);
+    private static ImmutableHashSet<string> GetSensitiveNames(AnalyzerOptions options)
+    {
+        if (options.AnalyzerConfigOptionsProvider.GlobalOptions
+            .TryGetValue("dotnet_diagnostic.SD001.sensitive_names", out string? value))
+        {
+            IEnumerable<string> names = value
+                .Split([','], StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrWhiteSpace(x));
+
+            List<string> enumerable = names.ToList();
+            return enumerable.Any()
+                ? enumerable.ToImmutableHashSet(StringComparer.OrdinalIgnoreCase)
+                : DefaultSensitiveNames;
+        }
+
+        return DefaultSensitiveNames;
     }
 
     private static bool HasSensitiveAttribute(ISymbol symbol)
     {
-        return Enumerable.Any(symbol.GetAttributes(), attr => attr.AttributeClass?.Name == "SensitiveDataAttribute");
+        return symbol.GetAttributes()
+            .Any(a => a.AttributeClass?.Name == "SensitiveDataAttribute");
     }
 }

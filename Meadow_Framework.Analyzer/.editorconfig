@@ -1,0 +1,45 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+# ================================
+# Meadow Framework – Security Rules
+# ================================
+
+# Enable analyzer
+dotnet_diagnostic.SD001.severity = warning
+
+# Comma-separated list of property names considered sensitive
+# Case-insensitive
+dotnet_diagnostic.SD001.sensitive_names =
+Name,
+FirstName,
+LastName,
+FullName,
+Email,
+EmailAddress,
+Username,
+Login,
+Password,
+PasswordHash,
+Phone,
+PhoneNumber,
+Mobile,
+Address,
+AddressLine1,
+AddressLine2,
+City,
+Country,
+ZipCode,
+PostalCode,
+SSN,
+NationalId,
+PassportNumber,
+CreditCard,
+CardNumber,
+IBAN,
+BankAccount,
+AccountNumber
