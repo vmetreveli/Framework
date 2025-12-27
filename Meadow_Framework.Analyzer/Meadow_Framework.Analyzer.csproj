@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <PackAsAnalyzer>true</PackAsAnalyzer>
+        <LangVersion>13</LangVersion>
+        <Nullable>enable</Nullable>
+        <PackageType>Analyzer</PackageType>
+        <IsPackable>true</IsPackable>
+        <IncludeBuildOutput>true</IncludeBuildOutput>
+        <!-- Prevent lib/ref expectations -->
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <!-- Analyzer APIs -->
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" PrivateAssets="all" />
+
+        <!-- CodeFix / Workspaces APIs -->
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.0.0" PrivateAssets="all" />
+        <PackageReference Include="System.Composition" Version="9.0.11" PrivateAssets="all" />
+        <PackageReference Update="MinVer" Version="6.0.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="bin/Release/netstandard2.0/Meadow_Framework.Analyzer.dll"
+              Pack="true"
+              PackagePath="analyzers/dotnet/cs" />
+    </ItemGroup>
+</Project>

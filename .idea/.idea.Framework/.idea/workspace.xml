@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a993fe70-423a-4e9c-ad05-571cf5d62ad3" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/Users/vakhushtimetreveli/RiderProjects/Framework" value="31854x5ar0hZR6jsU1NcoI2pF2T" />
+    </persistenceIdMap>
+  </component>
+  <component name="Git.Merge.Settings">
+    <option name="BRANCH" value="master" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="Dev" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;vmetreveli&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/vmetreveli/Framework.git&quot;,
+    &quot;accountId&quot;: &quot;cd09f4e6-8c80-440b-bd99-489b7e729539&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Framework.Abstractions/StringUtils.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Framework.Infrastructure/Exceptions/ApiProblemDetails.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Framework.Infrastructure/Properties/AssemblyInfo.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/nuget.config" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="31854x5ar0hZR6jsU1NcoI2pF2T" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHELLCHECK.PATH&quot;: &quot;/Users/vakhushtimetreveli/Library/Application Support/JetBrains/Rider2025.3/plugins/Shell Script/shellcheck&quot;,
+    &quot;SONARLINT_PRECOMMIT_ANALYSIS&quot;: &quot;false&quot;,
+    &quot;Shell Script.pack.sh.executor&quot;: &quot;Run&quot;,
+    &quot;Shell Script.push.sh.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;consents&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager" selected="Shell Script.pack.sh">
+    <configuration name="pack.sh" type="ShConfigurationType" temporary="true">
+      <option name="SCRIPT_TEXT" value="" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/scripts/pack.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$/scripts" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="/usr/bin/env" />
+      <option name="INTERPRETER_OPTIONS" value="bash" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="true" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="push.sh" type="ShConfigurationType" temporary="true">
+      <option name="SCRIPT_TEXT" value="" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/scripts/push.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$/scripts" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="/usr/bin/env" />
+      <option name="INTERPRETER_OPTIONS" value="bash" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="true" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Shell Script.pack.sh" />
+        <item itemvalue="Shell Script.push.sh" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a993fe70-423a-4e9c-ad05-571cf5d62ad3" name="Changes" comment="" />
+      <created>1754892672555</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1754892672555</updated>
+      <workItem from="1754892674726" duration="1158000" />
+      <workItem from="1765188397332" duration="2782000" />
+      <workItem from="1765607215764" duration="1965000" />
+      <workItem from="1765633140030" duration="38000" />
+      <workItem from="1765633209219" duration="596000" />
+      <workItem from="1765633826740" duration="149000" />
+      <workItem from="1765949434422" duration="55000" />
+      <workItem from="1765949513694" duration="1063000" />
+      <workItem from="1766082180748" duration="106000" />
+      <workItem from="1766082310626" duration="140000" />
+      <workItem from="1766082495784" duration="632000" />
+      <workItem from="1766138881612" duration="30000" />
+      <workItem from="1766138929353" duration="38000" />
+      <workItem from="1766138979579" duration="137000" />
+      <workItem from="1766140144568" duration="7701000" />
+    </task>
+    <task id="LOCAL-00001" summary="Update project to target .NET 10.0 and upgrade dependencies">
+      <option name="closed" value="true" />
+      <created>1765189073938</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1765189073938</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Add initial implementation of Dispatcher and QueryDispatcher with tests, and configure NuGet packaging">
+      <option name="closed" value="true" />
+      <created>1765633596797</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1765633596797</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Add database migration and seeding methods to application builder">
+      <option name="closed" value="true" />
+      <created>1765949779684</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1765949779684</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Add IPagedQuery interface and implement pagination handling in query handler">
+      <option name="closed" value="true" />
+      <created>1765950381330</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1765950381330</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Update language version to default in project files">
+      <option name="closed" value="true" />
+      <created>1766140624838</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1766140624839</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Add NuGet package metadata and push script for framework components">
+      <option name="closed" value="true" />
+      <created>1766141382427</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1766141382427</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Rename solution file from Framework.sln to Meadow_Framework.sln">
+      <option name="closed" value="true" />
+      <created>1766141566366</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1766141566366</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Refactor project file to include icon as None and update NuGet publish workflow">
+      <option name="closed" value="true" />
+      <created>1766143902769</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1766143902769</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Update workflow files to use renamed solution file Meadow_Framework.sln">
+      <option name="closed" value="true" />
+      <created>1766144164519</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1766144164519</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Update project files to reflect new package IDs and repository URLs">
+      <option name="closed" value="true" />
+      <created>1766145914194</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1766145914194</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Add artifacts directory creation and configure RunManager for pack.sh script">
+      <option name="closed" value="true" />
+      <created>1766146107103</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1766146107103</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Update project files to reflect new package IDs, descriptions, and repository URLs; add icon to project files">
+      <option name="closed" value="true" />
+      <created>1766148323244</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1766148323244</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Update project to target .NET 10.0 and upgrade dependencies" />
+    <MESSAGE value="Add initial implementation of Dispatcher and QueryDispatcher with tests, and configure NuGet packaging" />
+    <MESSAGE value="Add database migration and seeding methods to application builder" />
+    <MESSAGE value="Add IPagedQuery interface and implement pagination handling in query handler" />
+    <MESSAGE value="Update language version to default in project files" />
+    <MESSAGE value="Add NuGet package metadata and push script for framework components" />
+    <MESSAGE value="Rename solution file from Framework.sln to Meadow_Framework.sln" />
+    <MESSAGE value="Refactor project file to include icon as None and update NuGet publish workflow" />
+    <MESSAGE value="Update workflow files to use renamed solution file Meadow_Framework.sln" />
+    <MESSAGE value="Update project files to reflect new package IDs and repository URLs" />
+    <MESSAGE value="Add artifacts directory creation and configure RunManager for pack.sh script" />
+    <MESSAGE value="Update project files to reflect new package IDs, descriptions, and repository URLs; add icon to project files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update project files to reflect new package IDs, descriptions, and repository URLs; add icon to project files" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

@@ -2,12 +2,12 @@
 /shelf/
 /workspace.xml
 # Rider ignored files
-/modules.xml
-/.idea.Meadow_Framework.iml
 /contentModel.xml
 /projectSettingsUpdater.xml
-# Ignored default folder with query files
-/queries/
+/modules.xml
+/.idea.Framework.iml
+# Editor-based HTTP Client requests
+/httpRequests/
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
