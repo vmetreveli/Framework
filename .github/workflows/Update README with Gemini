@@ -1,0 +1,39 @@
+name: Update README with Gemini
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Ruby (if Gemini CLI needs it)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Install Gemini CLI
+        run: |
+          gem install gemini
+
+      - name: Update README via Gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          gemini write ./README.md --prompt "Update README with latest changes in the project" --output ./README.md
+
+      - name: Commit updated README
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update README via Gemini [skip ci]" || echo "No changes to commit"
+          git push
