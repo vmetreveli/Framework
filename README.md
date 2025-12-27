@@ -14,6 +14,7 @@ Table of Contents
   - Command + Handler
   - Publishing integration events
   - Repository + Unit of Work
+- Security & Analyzers
 - Registered services
 - Architecture (sequence)
 - Contributing
@@ -36,6 +37,7 @@ Key features
 - Integration events publishing with MassTransit (RabbitMQ)
 - DDD primitives and repository/unit-of-work abstractions
 - Exception middleware and API problem details helpers
+- Roslyn Analyzer for security (sensitive data detection)
 
 Prerequisites
 - .NET 6+ SDK (examples use the minimal host style)
@@ -131,6 +133,34 @@ IRepository<Order> orders = ...;
 var order = await orders.GetAsync(orderId);
 order.ApplyDomainEvent(new SomethingHappened(...));
 await orders.UnitOfWork.SaveChangesAsync();
+```
+
+Security & Analyzers
+
+The framework includes a Roslyn Analyzer to help identify potential sensitive data in your domain models.
+
+**Sensitive Data Detection (SD001)**
+
+The analyzer scans for properties with names suggesting sensitive information (e.g., `Password`, `Email`, `Phone`) and warns if they are not annotated with `[SensitiveData]`.
+
+**Configuration (.editorconfig)**
+
+You can customize the list of sensitive property names in your `.editorconfig`:
+
+```ini
+[*.cs]
+dotnet_diagnostic.SD001.severity = warning
+dotnet_diagnostic.SD001.sensitive_names = SSN, CreditCard, SecretAnswer
+```
+
+**Usage**
+
+```csharp
+public class User : EntityBase
+{
+    [SensitiveData] // Suppresses the warning and marks for masking/encryption
+    public string Password { get; private set; }
+}
 ```
 
 Registered services
