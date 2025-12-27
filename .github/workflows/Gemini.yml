@@ -26,7 +26,7 @@ jobs:
 
       - name: Update README via Gemini
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.MEADOWFRAMEWORK_ }}
         run: |
           gemini write ./README.md --prompt "Update README with latest changes in the project" --output ./README.md
 
